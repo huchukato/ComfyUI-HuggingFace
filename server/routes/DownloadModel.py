@@ -90,6 +90,9 @@ async def route_download_model(request):
         # Determine filename
         if custom_filename_input:
             final_filename = sanitize_filename(custom_filename_input)
+        elif target_filename is None:
+            # For repo downloads, use model name as folder
+            final_filename = model_info.get("name", target_model_id.split('/')[-1])
         else:
             final_filename = os.path.basename(target_filename)
         
