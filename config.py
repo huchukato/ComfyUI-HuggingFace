@@ -23,7 +23,7 @@ WEB_DIRECTORY = os.path.join(PLUGIN_ROOT, "web")
 JAVASCRIPT_PATH = os.path.join(WEB_DIRECTORY, "js")
 CSS_PATH = os.path.join(WEB_DIRECTORY, "css")
 # Corrected path construction to avoid issues with leading slashes
-PLACEHOLDER_IMAGE_PATH = os.path.join(WEB_DIRECTORY, "images", "placeholder.jpeg")
+PLACEHOLDER_IMAGE_PATH = os.path.join(WEB_DIRECTORY, "images", "placeholder.jpg")
 
 # Get ComfyUI directories using folder_paths
 COMFYUI_ROOT_DIR = folder_paths.base_path

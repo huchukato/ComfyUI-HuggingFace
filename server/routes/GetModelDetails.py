@@ -115,13 +115,13 @@ async def route_get_model_details(request):
         else:
             print("[Get Details Route] No valid first image found in version info, falling back to placeholder.")
             # Fallback placeholder logic (remains the same)
-            placeholder_filename = os.path.basename(PLACEHOLDER_IMAGE_PATH) if PLACEHOLDER_IMAGE_PATH else "placeholder.jpeg"
+            placeholder_filename = os.path.basename(PLACEHOLDER_IMAGE_PATH) if PLACEHOLDER_IMAGE_PATH else "placeholder.jpg"
             thumbnail_url = f"./{placeholder_filename}" # Relative path for JS to resolve
 
 
         # Fallback placeholder if no thumbnail found
         if not thumbnail_url:
-             placeholder_filename = os.path.basename(PLACEHOLDER_IMAGE_PATH) if PLACEHOLDER_IMAGE_PATH else "placeholder.jpeg"
+             placeholder_filename = os.path.basename(PLACEHOLDER_IMAGE_PATH) if PLACEHOLDER_IMAGE_PATH else "placeholder.jpg"
              thumbnail_url = f"./{placeholder_filename}" # Relative path for JS
 
         # Build minimal files listing for selection in UI/clients
