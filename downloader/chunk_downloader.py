@@ -378,7 +378,7 @@ class ChunkDownloader:
             if hasattr(e, 'response') and e.response is not None:
                 status_code = e.response.status_code
                 if status_code == 401: 
-                    error_msg_detail += " (Unauthorized - Check API Key?)"
+                    error_msg_detail += " (Unauthorized - Check HF token?)"
                 elif status_code == 403: 
                     error_msg_detail += " (Forbidden - Permissions Issue?)"
             

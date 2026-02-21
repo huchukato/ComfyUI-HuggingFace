@@ -33,7 +33,7 @@ async def route_search_models(request):
         if not query and not model_type_keys and not base_model_filters:
              raise web.HTTPBadRequest(reason="Search requires a query or at least one filter (type or base model).")
 
-        # API key priority: request payload > HUGGINGFACE_API_KEY env var
+        # API key priority: request payload > HUGGINGFACE_TOKEN env var
         api = HuggingFaceAPI(resolved_api_key)
 
         # --- Prepare Filters for Meili API call ---
