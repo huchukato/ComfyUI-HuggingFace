@@ -609,29 +609,47 @@ class DownloadManager:
             # Handle case where url is None (repo downloads)
             url = download_info["url"]
             if url is None:
-                print(f"[Downloader Wrapper {download_id}] URL is None, using huggingface_hub snapshot_download")
-                # For repo downloads, just use huggingface_hub snapshot_download directly
-                from huggingface_hub import snapshot_download
+                print(f"[Downloader Wrapper {download_id}] URL is None, using huggingface_hub")
+                # For repo downloads or single files, use huggingface_hub
+                from huggingface_hub import snapshot_download, hf_hub_download
                 
                 # Extract just the repo_id from model_url_or_id (remove URL part)
                 model_url_or_id = download_info["model_url_or_id"]
                 if model_url_or_id.startswith("https://huggingface.co/"):
-                    # Extract repo_id from URL like "https://huggingface.co/Kijai/WanVideo_comfy/resolve/..."
+                    # Extract repo_id and filename from URL
                     parts = model_url_or_id.replace("https://huggingface.co/", "").split("/")
                     model_id = f"{parts[0]}/{parts[1]}"  # Get "Kijai/WanVideo_comfy"
+                    
+                    # Check if it's a specific file or entire repo
+                    if len(parts) >= 4 and parts[2] == "resolve":
+                        # It's a specific file: /resolve/commit/path/to/file
+                        filename = "/".join(parts[4:])  # Get the file path after /resolve/commit/
+                        print(f"[Downloader Wrapper {download_id}] Downloading single file {filename} from repo {model_id}")
+                        
+                        # Use hf_hub_download for single file
+                        result = hf_hub_download(
+                            repo_id=model_id,
+                            filename=filename,
+                            local_dir=download_info["output_path"],
+                            token=download_info.get("api_key")
+                        )
+                    else:
+                        # It's an entire repo download
+                        print(f"[Downloader Wrapper {download_id}] Downloading entire repo {model_id}")
+                        result = snapshot_download(
+                            repo_id=model_id,
+                            local_dir=download_info["output_path"],
+                            token=download_info.get("api_key")
+                        )
                 else:
-                    model_id = model_url_or_id  # Already just the repo_id
-                
-                output_path = download_info["output_path"]
-                
-                print(f"[Downloader Wrapper {download_id}] Downloading repo {model_id} to {output_path}")
-                
-                # Use huggingface_hub to download the entire repo
-                result = snapshot_download(
-                    repo_id=model_id,
-                    local_dir=output_path,
-                    token=download_info.get("api_key")
-                )
+                    # Plain repo_id - assume entire repo download
+                    model_id = model_url_or_id
+                    print(f"[Downloader Wrapper {download_id}] Downloading entire repo {model_id}")
+                    result = snapshot_download(
+                        repo_id=model_id,
+                        local_dir=download_info["output_path"],
+                        token=download_info.get("api_key")
+                    )
                 
                 if result:
                     success = True
