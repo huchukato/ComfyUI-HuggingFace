@@ -49,37 +49,43 @@ async def route_download_model(request):
         api = HuggingFaceAPI(resolved_api_key)
         
         if parsed_filename:
-            # Direct download from URL
+            # Direct download from URL - skip API calls
             target_filename = parsed_filename
             model_info = {"id": target_model_id, "name": target_model_id}
             print(f"[HF Download] Direct download file: {target_filename}")
         else:
             # Get model info and file list
+            api = HuggingFaceAPI(resolved_api_key)
             model_info = api.get_model_info(target_model_id)
             
             if not model_info or "error" in model_info:
-                raise web.HTTPBadRequest(reason=f"Failed to get model info: {model_info.get('error', 'Unknown error') if model_info else 'No response'}")
-            
-            # Get file list
-            files_info = api.get_model_files(target_model_id)
-            if not files_info or "error" in files_info:
-                raise web.HTTPBadRequest(reason=f"Failed to get file list: {files_info.get('error', 'Unknown error') if files_info else 'No response'}")
-            
-            # Find the best file to download
-            target_filename = None
-            if isinstance(files_info, list):
-                # First try .safetensors files
-                for file_info in files_info:
-                    if (file_info.get("type") == "file" and 
-                        file_info.get("path", "").endswith(".safetensors")):
-                        target_filename = file_info["path"]
-                        break
-                
-                # If no .safetensors found, pick the largest file
-                if not target_filename:
-                    largest_file = max(files_info, key=lambda x: x.get("size", 0), default=None)
-                    if largest_file and largest_file.get("type") == "file":
-                        target_filename = largest_file["path"]
+                print(f"[HF Download] Model info failed, trying direct download")
+                # Fallback: try direct download without file listing
+                target_filename = "model.safetensors"  # Default filename
+                model_info = {"id": target_model_id, "name": target_model_id}
+            else:
+                # Get file list
+                files_info = api.get_model_files(target_model_id)
+                if not files_info or "error" in files_info:
+                    print(f"[HF Download] File list failed, trying direct download")
+                    # Fallback: try direct download without file listing
+                    target_filename = "model.safetensors"  # Default filename
+                else:
+                    # Find the best file to download
+                    target_filename = None
+                    if isinstance(files_info, list):
+                        # First try .safetensors files
+                        for file_info in files_info:
+                            if (file_info.get("type") == "file" and 
+                                file_info.get("path", "").endswith(".safetensors")):
+                                target_filename = file_info["path"]
+                                break
+                    
+                    # If no .safetensors found, pick the largest file
+                    if not target_filename:
+                        largest_file = max(files_info, key=lambda x: x.get("size", 0), default=None)
+                        if largest_file and largest_file.get("type") == "file":
+                            target_filename = largest_file["path"]
         
         if not target_filename:
             raise web.HTTPBadRequest(reason="No suitable file found for download")
