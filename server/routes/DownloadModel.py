@@ -61,7 +61,7 @@ async def route_download_model(request):
             if not model_info or "error" in model_info:
                 print(f"[HF Download] Model info failed, trying direct download")
                 # Fallback: try direct download without file listing
-                target_filename = "model.safetensors"  # Default filename
+                target_filename = parsed_filename if parsed_filename else "model.safetensors"  # Use parsed or default
                 model_info = {"id": target_model_id, "name": target_model_id}
             else:
                 # Get file list
@@ -69,7 +69,8 @@ async def route_download_model(request):
                 if not files_info or "error" in files_info:
                     print(f"[HF Download] File list failed, trying direct download")
                     # Fallback: try direct download without file listing
-                    target_filename = "model.safetensors"  # Default filename
+                    target_filename = parsed_filename if parsed_filename else "model.safetensors"  # Use parsed or default
+                    model_info = {"id": target_model_id, "name": target_model_id}
                 else:
                     # Find the best file to download
                     target_filename = None
