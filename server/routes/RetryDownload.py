@@ -10,7 +10,7 @@ from ...downloader.manager import manager as download_manager
 
 prompt_server = server.PromptServer.instance
 
-@prompt_server.routes.post("/huggingface/retry")
+@prompt_server.routes.post("/api/huggingface/retry")
 async def route_retry_download(request):
     """API Endpoint to retry a failed/cancelled download."""
     if not download_manager:

@@ -13,7 +13,7 @@ from ...config import HUGGINGFACE_API_TYPE_MAP
 
 prompt_server = server.PromptServer.instance
 
-@prompt_server.routes.post("/huggingface/search")
+@prompt_server.routes.post("/api/huggingface/search")
 async def route_search_models(request):
     """API Endpoint for searching models using HuggingFace's Meilisearch."""
     try:

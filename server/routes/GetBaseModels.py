@@ -7,7 +7,7 @@ from ...config import AVAILABLE_MEILI_BASE_MODELS
 
 prompt_server = server.PromptServer.instance
 
-@prompt_server.routes.get("/huggingface/base_models")
+@prompt_server.routes.get("/api/huggingface/base_models")
 async def route_get_base_models(request):
     """API Endpoint to get the known base model types for filtering."""
     try:

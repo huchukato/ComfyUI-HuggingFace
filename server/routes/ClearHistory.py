@@ -9,7 +9,7 @@ from ...downloader.manager import manager as download_manager
 
 prompt_server = server.PromptServer.instance
 
-@prompt_server.routes.post("/huggingface/clear_history")
+@prompt_server.routes.post("/api/huggingface/clear_history")
 async def route_clear_history(request):
     """API Endpoint to clear the download history."""
     if not download_manager:
