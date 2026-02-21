@@ -173,7 +173,7 @@ async def route_download_model(request):
             "status": "queued"  # Changed from "started" to "queued" to match frontend expectation
         }
         
-        print(f"[DEBUG] Response data model_name: {response_data['huggingface_model_name']}")
+        print(f"[DEBUG] Response data huggingface_model_name: {response_data['huggingface_model_name']}")
 
         return web.json_response(response_data)
 
