@@ -7,13 +7,8 @@ from typing import Any, Dict, Optional
 from aiohttp import web
 
 # Import necessary components from our modules
-try:
-    from ..api.huggingface import HuggingFaceAPI
-    from ..utils.helpers import parse_huggingface_input
-except ImportError:
-    # Fallback for testing
-    from api.huggingface import HuggingFaceAPI
-    from utils.helpers import parse_huggingface_input
+from ..api.huggingface import HuggingFaceAPI
+from ..utils.helpers import parse_huggingface_input
 
 async def get_request_json(request):
     """Safely get JSON data from request."""
