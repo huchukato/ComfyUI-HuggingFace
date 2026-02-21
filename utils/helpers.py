@@ -143,10 +143,10 @@ def parse_huggingface_input(url_or_id: str) -> tuple[str | None, str | None]:
             
             # Extract model ID from path
             path_parts = parsed_url.path.split('/')
-            if len(path_parts) >= 2 and path_parts[1] == "resolve":
+            if len(path_parts) >= 4 and path_parts[2] == "resolve":
                 # URL format: /FX-FeiHou/wan2.2-Remix/resolve/main/NSFW/file.safetensors
                 model_id = "/".join(path_parts[0:2])  # FX-FeiHou/wan2.2-Remix
-                filename = "/".join(path_parts[4:])  # NSFW/file.safetensors
+                filename = "/".join(path_parts[3:])  # main/NSFW/file.safetensors
                 print(f"Parsed HF download URL - Model: {model_id}, File: {filename}")
                 return model_id, filename
         except Exception as e:
