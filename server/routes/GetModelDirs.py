@@ -30,7 +30,7 @@ def _load_custom_roots():
                     # Normalize values to lists of strings
                     return {k: [str(p) for p in (v or []) if isinstance(p, str)] for k, v in data.items()}
     except Exception as e:
-        print(f"[Civicomfy] Warning: Failed to load custom roots: {e}")
+        print(f"[HuggingFace] Warning: Failed to load custom roots: {e}")
     return {}
 
 def _save_custom_roots(data):
@@ -39,7 +39,7 @@ def _save_custom_roots(data):
             json.dump(data, f, indent=2)
         return True
     except Exception as e:
-        print(f"[Civicomfy] Error writing custom roots file: {e}")
+        print(f"[HuggingFace] Error writing custom roots file: {e}")
         return False
 
 def _load_root_settings():
@@ -50,7 +50,7 @@ def _load_root_settings():
                 if isinstance(data, dict):
                     return data
     except Exception as e:
-        print(f"[Civicomfy] Warning: Failed to load root settings: {e}")
+        print(f"[HuggingFace] Warning: Failed to load root settings: {e}")
     return {}
 
 def _save_root_settings(data):
@@ -59,7 +59,7 @@ def _save_root_settings(data):
             json.dump(data, f, indent=2)
         return True
     except Exception as e:
-        print(f"[Civicomfy] Error writing root settings file: {e}")
+        print(f"[HuggingFace] Error writing root settings file: {e}")
         return False
 
 def get_global_default_root():
@@ -143,7 +143,7 @@ def _get_all_roots_for_type(model_type: str):
                     if ap not in roots:
                         roots.append(ap)
     except Exception as e:
-        print(f"[Civicomfy] Warning: Failed to enumerate models dir subfolders: {e}")
+        print(f"[HuggingFace] Warning: Failed to enumerate models dir subfolders: {e}")
     return roots
 
 def _list_subdirs(root_dir: str, max_entries: int = 5000):

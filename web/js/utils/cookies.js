@@ -1,4 +1,4 @@
-// Lightweight cookie helpers for Civicomfy UI
+// Lightweight cookie helpers for HuggingFace UI
 // Exports: setCookie, getCookie
 
 export function setCookie(name, value, days) {

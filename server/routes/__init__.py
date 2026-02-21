@@ -18,4 +18,4 @@ from . import OpenPath
 from . import RetryDownload
 from . import SearchModels
 
-print("[Civicomfy] All server route modules loaded.")
+print("[HuggingFace] All server route modules loaded.")

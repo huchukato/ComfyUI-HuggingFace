@@ -1,4 +1,4 @@
-import { CivitaiDownloaderAPI } from "../../api/civitai.js";
+import { HuggingFaceDownloaderAPI } from "../../api/huggingface.js";
 export function setupEventListeners(ui) {
     // Modal close
     ui.closeButton.addEventListener('click', () => ui.closeModal());
@@ -8,7 +8,7 @@ export function setupEventListeners(ui) {
 
     // Tab switching
     ui.tabContainer.addEventListener('click', (event) => {
-        if (event.target.matches('.civitai-downloader-tab')) {
+        if (event.target.matches('.huggingface-downloader-tab')) {
             ui.switchTab(event.target.dataset.tab);
         }
     });
@@ -29,7 +29,7 @@ export function setupEventListeners(ui) {
         const name = prompt('Enter new model type folder name (will be created under models/)');
         if (!name) return;
         try {
-            const res = await CivitaiDownloaderAPI.createModelType(name);
+            const res = await HuggingFaceDownloaderAPI.createModelType(name);
             if (res && res.success) {
                 await ui.populateModelTypes();
                 ui.downloadModelTypeSelect.value = res.name;
@@ -49,7 +49,7 @@ export function setupEventListeners(ui) {
         const name = prompt('Enter new subfolder name (you can include nested paths like A/B):');
         if (!name) return;
         try {
-            const res = await CivitaiDownloaderAPI.createModelDir(type, name);
+            const res = await HuggingFaceDownloaderAPI.createModelDir(type, name);
             if (res && res.success) {
                 await ui.loadAndPopulateSubdirs(type);
                 if (ui.subdirSelect) ui.subdirSelect.value = res.created || '';
@@ -98,7 +98,7 @@ export function setupEventListeners(ui) {
 
     // Status tab actions (Cancel/Retry/Open/Clear) and click-to-toggle blur on thumbs
     ui.statusContent.addEventListener('click', (event) => {
-        const thumbContainer = event.target.closest('.civitai-thumbnail-container');
+        const thumbContainer = event.target.closest('.huggingface-thumbnail-container');
         if (thumbContainer) {
             const nsfwLevel = Number(thumbContainer.dataset.nsfwLevel ?? thumbContainer.getAttribute('data-nsfw-level'));
             const threshold = Number(ui.settings?.nsfwBlurMinLevel ?? 4);
@@ -106,13 +106,13 @@ export function setupEventListeners(ui) {
             if (enabled && Number.isFinite(nsfwLevel) && nsfwLevel >= threshold) {
                 if (thumbContainer.classList.contains('blurred')) {
                     thumbContainer.classList.remove('blurred');
-                    const overlay = thumbContainer.querySelector('.civitai-nsfw-overlay');
+                    const overlay = thumbContainer.querySelector('.huggingface-nsfw-overlay');
                     if (overlay) overlay.remove();
                 } else {
                     thumbContainer.classList.add('blurred');
-                    if (!thumbContainer.querySelector('.civitai-nsfw-overlay')) {
+                    if (!thumbContainer.querySelector('.huggingface-nsfw-overlay')) {
                         const ov = document.createElement('div');
-                        ov.className = 'civitai-nsfw-overlay';
+                        ov.className = 'huggingface-nsfw-overlay';
                         ov.title = 'R-rated: click to reveal';
                         ov.textContent = 'R';
                         thumbContainer.appendChild(ov);
@@ -127,17 +127,17 @@ export function setupEventListeners(ui) {
 
         const downloadId = button.dataset.id;
         if (downloadId) {
-            if (button.classList.contains('civitai-cancel-button')) ui.handleCancelDownload(downloadId);
-            else if (button.classList.contains('civitai-retry-button')) ui.handleRetryDownload(downloadId, button);
-            else if (button.classList.contains('civitai-openpath-button')) ui.handleOpenPath(downloadId, button);
-        } else if (button.id === 'civitai-clear-history-button') {
+            if (button.classList.contains('huggingface-cancel-button')) ui.handleCancelDownload(downloadId);
+            else if (button.classList.contains('huggingface-retry-button')) ui.handleRetryDownload(downloadId, button);
+            else if (button.classList.contains('huggingface-openpath-button')) ui.handleOpenPath(downloadId, button);
+        } else if (button.id === 'huggingface-clear-history-button') {
             ui.confirmClearModal.style.display = 'flex';
         }
     });
 
     // Download preview click-to-toggle blur
     ui.downloadPreviewArea.addEventListener('click', (event) => {
-        const thumbContainer = event.target.closest('.civitai-thumbnail-container');
+        const thumbContainer = event.target.closest('.huggingface-thumbnail-container');
         if (thumbContainer) {
             const nsfwLevel = Number(thumbContainer.dataset.nsfwLevel ?? thumbContainer.getAttribute('data-nsfw-level'));
             const threshold = Number(ui.settings?.nsfwBlurMinLevel ?? 4);
@@ -145,13 +145,13 @@ export function setupEventListeners(ui) {
             if (enabled && Number.isFinite(nsfwLevel) && nsfwLevel >= threshold) {
                 if (thumbContainer.classList.contains('blurred')) {
                     thumbContainer.classList.remove('blurred');
-                    const overlay = thumbContainer.querySelector('.civitai-nsfw-overlay');
+                    const overlay = thumbContainer.querySelector('.huggingface-nsfw-overlay');
                     if (overlay) overlay.remove();
                 } else {
                     thumbContainer.classList.add('blurred');
-                    if (!thumbContainer.querySelector('.civitai-nsfw-overlay')) {
+                    if (!thumbContainer.querySelector('.huggingface-nsfw-overlay')) {
                         const ov = document.createElement('div');
-                        ov.className = 'civitai-nsfw-overlay';
+                        ov.className = 'huggingface-nsfw-overlay';
                         ov.title = 'R-rated: click to reveal';
                         ov.textContent = 'R';
                         thumbContainer.appendChild(ov);
@@ -163,7 +163,7 @@ export function setupEventListeners(ui) {
 
     // Search results actions, including click-to-toggle blur
     ui.searchResultsContainer.addEventListener('click', (event) => {
-        const thumbContainer = event.target.closest('.civitai-thumbnail-container');
+        const thumbContainer = event.target.closest('.huggingface-thumbnail-container');
         if (thumbContainer) {
             const nsfwLevel = Number(thumbContainer.dataset.nsfwLevel ?? thumbContainer.getAttribute('data-nsfw-level'));
             const threshold = Number(ui.settings?.nsfwBlurMinLevel ?? 4);
@@ -171,13 +171,13 @@ export function setupEventListeners(ui) {
             if (enabled && Number.isFinite(nsfwLevel) && nsfwLevel >= threshold) {
                 if (thumbContainer.classList.contains('blurred')) {
                     thumbContainer.classList.remove('blurred');
-                    const overlay = thumbContainer.querySelector('.civitai-nsfw-overlay');
+                    const overlay = thumbContainer.querySelector('.huggingface-nsfw-overlay');
                     if (overlay) overlay.remove();
                 } else {
                     thumbContainer.classList.add('blurred');
-                    if (!thumbContainer.querySelector('.civitai-nsfw-overlay')) {
+                    if (!thumbContainer.querySelector('.huggingface-nsfw-overlay')) {
                         const ov = document.createElement('div');
-                        ov.className = 'civitai-nsfw-overlay';
+                        ov.className = 'huggingface-nsfw-overlay';
                         ov.title = 'R-rated: click to reveal';
                         ov.textContent = 'R';
                         thumbContainer.appendChild(ov);
@@ -187,7 +187,7 @@ export function setupEventListeners(ui) {
             }
         }
 
-        const downloadButton = event.target.closest('.civitai-search-download-button');
+        const downloadButton = event.target.closest('.huggingface-search-download-button');
         if (downloadButton) {
             event.preventDefault();
             const { modelId, versionId, modelType } = downloadButton.dataset;
@@ -225,7 +225,7 @@ export function setupEventListeners(ui) {
 
     // Pagination
     ui.searchPaginationContainer.addEventListener('click', (event) => {
-        const button = event.target.closest('.civitai-page-button');
+        const button = event.target.closest('.huggingface-page-button');
         if (button && !button.disabled) {
             const page = parseInt(button.dataset.page, 10);
             if (page && page !== ui.searchPagination.currentPage) {

@@ -1,6 +1,6 @@
 // Renders active/queued/history download lists
 
-const PLACEHOLDER_IMAGE_URL = `/extensions/Civicomfy/images/placeholder.jpeg`;
+const PLACEHOLDER_IMAGE_URL = `/extensions/HuggingFace/images/placeholder.jpeg`;
 
 export function renderDownloadList(ui, items, container, emptyMessage) {
   if (!items || items.length === 0) {
@@ -39,7 +39,7 @@ export function renderDownloadList(ui, items, container, emptyMessage) {
     }
 
     const listItem = document.createElement('div');
-    listItem.className = 'civitai-download-item';
+    listItem.className = 'huggingface-download-item';
     listItem.dataset.id = id;
 
     const onErrorScript = `this.onerror=null; this.src='${PLACEHOLDER_IMAGE_URL}'; this.style.backgroundColor='#444';`;
@@ -51,15 +51,15 @@ export function renderDownloadList(ui, items, container, emptyMessage) {
     const errorTooltip = errorMsg ? `title="Error Details: ${String(errorMsg).substring(0, 200)}${String(errorMsg).length > 200 ? '...' : ''}"` : '';
     const connectionInfoHtml = connectionType !== "N/A" ? `<span style="font-size: 0.85em; color: #aaa; margin-left: 10px;">(Conn: ${connectionType})</span>` : '';
 
-    const overlayHtml = shouldBlur ? `<div class=\"civitai-nsfw-overlay\" title=\"R-rated: click to reveal\">R</div>` : '';
-    const containerClasses = `civitai-thumbnail-container${shouldBlur ? ' blurred' : ''}`;
+    const overlayHtml = shouldBlur ? `<div class=\"huggingface-nsfw-overlay\" title=\"R-rated: click to reveal\">R</div>` : '';
+    const containerClasses = `huggingface-thumbnail-container${shouldBlur ? ' blurred' : ''}`;
 
     let innerHTML = `
       <div class="${containerClasses}" data-nsfw-level="${Number.isFinite(nsfwLevel) ? nsfwLevel : ''}">
-        <img src="${thumbnail}" alt="thumbnail" class="civitai-download-thumbnail" loading="lazy" onerror="${onErrorScript}">
+        <img src="${thumbnail}" alt="thumbnail" class="huggingface-download-thumbnail" loading="lazy" onerror="${onErrorScript}">
         ${overlayHtml}
       </div>
-      <div class="civitai-download-info">
+      <div class="huggingface-download-info">
         <strong>${modelName}</strong>
         <p>Ver: ${versionName}</p>
         <p class="filename" ${filenameTooltip}>${filename}</p>
@@ -72,8 +72,8 @@ export function renderDownloadList(ui, items, container, emptyMessage) {
     if (status === 'downloading' || status === 'starting' || status === 'completed') {
       const statusLine = `<div ${durationTooltip} ${endedTooltip}>Status: ${statusText} ${connectionInfoHtml}</div>`;
       innerHTML += `
-        <div class="civitai-progress-container" title="${statusText} - ${progress.toFixed(1)}%">
-          <div class="civitai-progress-bar ${progressBarClass}" style="width: ${progress}%;">
+        <div class="huggingface-progress-container" title="${statusText} - ${progress.toFixed(1)}%">
+          <div class="huggingface-progress-bar ${progressBarClass}" style="width: ${progress}%;">
             ${progress > 15 ? progress.toFixed(0)+'%' : ''}
           </div>
         </div>
@@ -81,7 +81,7 @@ export function renderDownloadList(ui, items, container, emptyMessage) {
       const speedText = (status === 'downloading' && speed > 0) ? ui.formatSpeed(speed) : '';
       const progressText = (status === 'downloading' && size > 0) ? `(${ui.formatBytes(downloadedBytes)} / ${ui.formatBytes(size)})` : '';
       const completedText = status === 'completed' ? '' : '';
-      const speedProgLine = `<div class="civitai-speed-indicator">${speedText} ${progressText} ${completedText}</div>`;
+      const speedProgLine = `<div class="huggingface-speed-indicator">${speedText} ${progressText} ${completedText}</div>`;
       if (status === 'downloading') { innerHTML += speedProgLine; }
       innerHTML += statusLine;
     } else if (status === 'failed' || status === 'cancelled' || status === 'queued') {
@@ -91,15 +91,15 @@ export function renderDownloadList(ui, items, container, emptyMessage) {
     }
 
     innerHTML += `</div>`;
-    innerHTML += `<div class="civitai-download-actions">`;
+    innerHTML += `<div class="huggingface-download-actions">`;
     if (status === 'queued' || status === 'downloading' || status === 'starting') {
-      innerHTML += `<button class="civitai-button danger small civitai-cancel-button" data-id="${id}" title="Cancel Download"><i class="fas fa-times"></i></button>`;
+      innerHTML += `<button class="huggingface-button danger small huggingface-cancel-button" data-id="${id}" title="Cancel Download"><i class="fas fa-times"></i></button>`;
     }
     if (status === 'failed' || status === 'cancelled') {
-      innerHTML += `<button class="civitai-button small civitai-retry-button" data-id="${id}" title="Retry Download"><i class="fas fa-redo"></i></button>`;
+      innerHTML += `<button class="huggingface-button small huggingface-retry-button" data-id="${id}" title="Retry Download"><i class="fas fa-redo"></i></button>`;
     }
     if (status === 'completed') {
-      innerHTML += `<button class="civitai-button small civitai-openpath-button" data-id="${id}" title="Open Containing Folder"><i class="fas fa-folder-open"></i></button>`;
+      innerHTML += `<button class="huggingface-button small huggingface-openpath-button" data-id="${id}" title="Open Containing Folder"><i class="fas fa-folder-open"></i></button>`;
     }
     innerHTML += `</div>`;
 

@@ -24,11 +24,11 @@ try:
     # Import server routes (registers the routes)
     from .server import routes
     imports_successful = True
-    print("[Civicomfy] Core modules imported successfully.")
+    print("[HuggingFace] Core modules imported successfully.")
 except ImportError as e:
     imports_successful = False
     print("*"*80)
-    print(f"[Civicomfy] ERROR: Failed to import core modules: {e}")
+    print(f"[HuggingFace] ERROR: Failed to import core modules: {e}")
     print("Please ensure the file structure is correct and all required files exist.")
     print("Extension will likely not function correctly.")
     print("*"*80)
@@ -37,7 +37,7 @@ except Exception as e:
     # Catch other potential init errors during import
     import traceback
     print("*"*80)
-    print(f"[Civicomfy] ERROR: An unexpected error occurred during module import:")
+    print(f"[HuggingFace] ERROR: An unexpected error occurred during module import:")
     traceback.print_exc()
     print("Extension will likely not function correctly.")
     print("*"*80)
@@ -46,7 +46,7 @@ except Exception as e:
 frontend_files_ok = True
 if not os.path.exists(CSS_FILE_PATH):
     print("*"*80)
-    print(f"[Civicomfy] WARNING: Frontend CSS file not found!")
+    print(f"[HuggingFace] WARNING: Frontend CSS file not found!")
     print(f"                         Expected at: {CSS_FILE_PATH}")
     print("                         The downloader UI may not display correctly.")
     print(f"                         Please ensure '{CSS_FILENAME}' is placed in the '{os.path.basename(JS_PATH)}' directory inside 'web'.") # Corrected path hint
@@ -55,7 +55,7 @@ if not os.path.exists(CSS_FILE_PATH):
 
 if not os.path.exists(JS_FILE_PATH):
     print("*"*80)
-    print(f"[Civicomfy] WARNING: Frontend JavaScript file not found!")
+    print(f"[HuggingFace] WARNING: Frontend JavaScript file not found!")
     print(f"                         Expected at: {JS_FILE_PATH}")
     print("                         The downloader UI functionality will be missing.")
     print(f"                         Please ensure '{JS_FILENAME}' is placed in the '{os.path.basename(JS_PATH)}' directory inside 'web'.") # Corrected path hint
@@ -70,13 +70,13 @@ if imports_successful:
     NODE_DISPLAY_NAME_MAPPINGS = {}
 
     # Define the web directory for ComfyUI to serve
-    # The key is the path component in the URL: /extensions/Civicomfy/...
+    # The key is the path component in the URL: /extensions/HuggingFace/...
     # The value is the directory path relative to this __init__.py file
     WEB_DIRECTORY = "./web" # This tells ComfyUI to serve the ./web folder relative to this file
 
     # --- Startup Messages ---
     print("-" * 30)
-    print("--- Civicomfy Custom Extension Loaded ---")
+    print("--- HuggingFace Custom Extension Loaded ---")
     print(f"- Serving frontend files from: {os.path.abspath(WEB_PATH)} (Relative: {WEB_DIRECTORY})")
     # Download manager and routes are initialized/registered upon import
     print(f"- Download Manager Initialized: {'Yes' if 'download_manager' in locals() else 'No! Import failed.'}")
@@ -85,7 +85,7 @@ if imports_successful:
          print("- Frontend files found.")
     else:
          print("- WARNING: Frontend files missing (see warnings above). UI may not work.")
-    print("- Look for 'Civicomfy' button in the ComfyUI menu.")
+    print("- Look for 'HuggingFace' button in the ComfyUI menu.")
     print("-" * 30)
 
     # Ensure default model-type directories exist at startup
@@ -96,15 +96,15 @@ if imports_successful:
         for key in MODEL_TYPE_DIRS.keys():
             path = get_model_dir(key)
             created.append((key, path))
-        print("[Civicomfy] Verified model type directories:")
+        print("[HuggingFace] Verified model type directories:")
         for k, p in created:
             print(f"  - {k}: {p}")
     except Exception as e:
-        print(f"[Civicomfy] Warning: Failed ensuring model directories at startup: {e}")
+        print(f"[HuggingFace] Warning: Failed ensuring model directories at startup: {e}")
 
 else:
     # If imports failed, don't register anything with ComfyUI
-    print("[Civicomfy] Initialization failed due to import errors. Extension inactive.")
+    print("[HuggingFace] Initialization failed due to import errors. Extension inactive.")
     NODE_CLASS_MAPPINGS = {}
     NODE_DISPLAY_NAME_MAPPINGS = {}
     WEB_DIRECTORY = None # Do not serve web directory if backend failed

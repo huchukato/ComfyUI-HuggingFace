@@ -18,9 +18,9 @@ import { renderSearchResults } from "./searchRenderer.js";
 import { renderDownloadList } from "./statusRenderer.js";
 import { renderDownloadPreview } from "./previewRenderer.js";
 import { modalTemplate } from "./templates.js";
-import { CivitaiDownloaderAPI } from "../api/civitai.js";
+import { HuggingFaceDownloaderAPI } from "../api/huggingface.js";
 
-export class CivitaiDownloaderUI {
+export class HuggingFaceDownloaderUI {
     constructor() {
         this.modal = null;
         this.tabs = {};
@@ -39,7 +39,7 @@ export class CivitaiDownloaderUI {
         this.buildModalHTML();
         this.cacheDOMElements();
         this.setupEventListeners();
-        this.feedback = new Feedback(this.modal.querySelector('#civitai-toast'));
+        this.feedback = new Feedback(this.modal.querySelector('#huggingface-toast'));
         // Ensure icon stylesheet is loaded so buttons render icons immediately
         this.ensureFontAwesome();
     }
@@ -47,83 +47,83 @@ export class CivitaiDownloaderUI {
     // --- Core UI Methods ---
     buildModalHTML() {
         this.modal = document.createElement('div');
-        this.modal.className = 'civitai-downloader-modal';
-        this.modal.id = 'civitai-downloader-modal';
+        this.modal.className = 'huggingface-downloader-modal';
+        this.modal.id = 'huggingface-downloader-modal';
         this.modal.innerHTML = modalTemplate(this.settings);
     }
 
     cacheDOMElements() {
-        this.closeButton = this.modal.querySelector('#civitai-close-modal');
-        this.tabContainer = this.modal.querySelector('.civitai-downloader-tabs');
+        this.closeButton = this.modal.querySelector('#huggingface-close-modal');
+        this.tabContainer = this.modal.querySelector('.huggingface-downloader-tabs');
 
         // Download Tab
-        this.downloadForm = this.modal.querySelector('#civitai-download-form');
-        this.downloadPreviewArea = this.modal.querySelector('#civitai-download-preview-area');
-        this.modelUrlInput = this.modal.querySelector('#civitai-model-url');
-        this.modelVersionIdInput = this.modal.querySelector('#civitai-model-version-id');
-        this.downloadModelTypeSelect = this.modal.querySelector('#civitai-model-type');
-        this.createModelTypeButton = this.modal.querySelector('#civitai-create-model-type');
-        this.customFilenameInput = this.modal.querySelector('#civitai-custom-filename');
-        this.subdirSelect = this.modal.querySelector('#civitai-subdir-select');
-        this.createSubdirButton = this.modal.querySelector('#civitai-create-subdir');
-        this.saveBasePathHint = this.modal.querySelector('#civitai-save-base-path');
-        this.downloadConnectionsInput = this.modal.querySelector('#civitai-connections');
-        this.forceRedownloadCheckbox = this.modal.querySelector('#civitai-force-redownload');
-        this.downloadSubmitButton = this.modal.querySelector('#civitai-download-submit');
+        this.downloadForm = this.modal.querySelector('#huggingface-download-form');
+        this.downloadPreviewArea = this.modal.querySelector('#huggingface-download-preview-area');
+        this.modelUrlInput = this.modal.querySelector('#huggingface-model-url');
+        this.modelVersionIdInput = this.modal.querySelector('#huggingface-model-version-id');
+        this.downloadModelTypeSelect = this.modal.querySelector('#huggingface-model-type');
+        this.createModelTypeButton = this.modal.querySelector('#huggingface-create-model-type');
+        this.customFilenameInput = this.modal.querySelector('#huggingface-custom-filename');
+        this.subdirSelect = this.modal.querySelector('#huggingface-subdir-select');
+        this.createSubdirButton = this.modal.querySelector('#huggingface-create-subdir');
+        this.saveBasePathHint = this.modal.querySelector('#huggingface-save-base-path');
+        this.downloadConnectionsInput = this.modal.querySelector('#huggingface-connections');
+        this.forceRedownloadCheckbox = this.modal.querySelector('#huggingface-force-redownload');
+        this.downloadSubmitButton = this.modal.querySelector('#huggingface-download-submit');
 
         // Search Tab
-        this.searchForm = this.modal.querySelector('#civitai-search-form');
-        this.searchQueryInput = this.modal.querySelector('#civitai-search-query');
-        this.searchTypeSelect = this.modal.querySelector('#civitai-search-type');
-        this.searchBaseModelSelect = this.modal.querySelector('#civitai-search-base-model');
-        this.searchSortSelect = this.modal.querySelector('#civitai-search-sort');
-        this.searchPeriodSelect = this.modal.querySelector('#civitai-search-period');
-        this.searchSubmitButton = this.modal.querySelector('#civitai-search-submit');
-        this.searchResultsContainer = this.modal.querySelector('#civitai-search-results');
-        this.searchPaginationContainer = this.modal.querySelector('#civitai-search-pagination');
+        this.searchForm = this.modal.querySelector('#huggingface-search-form');
+        this.searchQueryInput = this.modal.querySelector('#huggingface-search-query');
+        this.searchTypeSelect = this.modal.querySelector('#huggingface-search-type');
+        this.searchBaseModelSelect = this.modal.querySelector('#huggingface-search-base-model');
+        this.searchSortSelect = this.modal.querySelector('#huggingface-search-sort');
+        this.searchPeriodSelect = this.modal.querySelector('#huggingface-search-period');
+        this.searchSubmitButton = this.modal.querySelector('#huggingface-search-submit');
+        this.searchResultsContainer = this.modal.querySelector('#huggingface-search-results');
+        this.searchPaginationContainer = this.modal.querySelector('#huggingface-search-pagination');
 
         // Status Tab
-        this.statusContent = this.modal.querySelector('#civitai-status-content');
-        this.activeListContainer = this.modal.querySelector('#civitai-active-list');
-        this.queuedListContainer = this.modal.querySelector('#civitai-queued-list');
-        this.historyListContainer = this.modal.querySelector('#civitai-history-list');
-        this.statusIndicator = this.modal.querySelector('#civitai-status-indicator');
-        this.activeCountSpan = this.modal.querySelector('#civitai-active-count');
-        this.clearHistoryButton = this.modal.querySelector('#civitai-clear-history-button');
-        this.confirmClearModal = this.modal.querySelector('#civitai-confirm-clear-modal');
-        this.confirmClearYesButton = this.modal.querySelector('#civitai-confirm-clear-yes');
-        this.confirmClearNoButton = this.modal.querySelector('#civitai-confirm-clear-no');
+        this.statusContent = this.modal.querySelector('#huggingface-status-content');
+        this.activeListContainer = this.modal.querySelector('#huggingface-active-list');
+        this.queuedListContainer = this.modal.querySelector('#huggingface-queued-list');
+        this.historyListContainer = this.modal.querySelector('#huggingface-history-list');
+        this.statusIndicator = this.modal.querySelector('#huggingface-status-indicator');
+        this.activeCountSpan = this.modal.querySelector('#huggingface-active-count');
+        this.clearHistoryButton = this.modal.querySelector('#huggingface-clear-history-button');
+        this.confirmClearModal = this.modal.querySelector('#huggingface-confirm-clear-modal');
+        this.confirmClearYesButton = this.modal.querySelector('#huggingface-confirm-clear-yes');
+        this.confirmClearNoButton = this.modal.querySelector('#huggingface-confirm-clear-no');
 
         // Settings Tab
-        this.settingsForm = this.modal.querySelector('#civitai-settings-form');
-        this.settingsApiKeyInput = this.modal.querySelector('#civitai-settings-api-key');
-        this.settingsGlobalRootInput = this.modal.querySelector('#civitai-settings-global-root');
-        this.settingsSetGlobalRootButton = this.modal.querySelector('#civitai-settings-set-global-root');
-        this.settingsClearGlobalRootButton = this.modal.querySelector('#civitai-settings-clear-global-root');
-        this.settingsConnectionsInput = this.modal.querySelector('#civitai-settings-connections');
-        this.settingsDefaultTypeSelect = this.modal.querySelector('#civitai-settings-default-type');
-        this.settingsAutoOpenCheckbox = this.modal.querySelector('#civitai-settings-auto-open-status');
-        this.settingsHideMatureCheckbox = this.modal.querySelector('#civitai-settings-hide-mature');
-        this.settingsNsfwThresholdInput = this.modal.querySelector('#civitai-settings-nsfw-threshold');
-        this.settingsSaveButton = this.modal.querySelector('#civitai-settings-save');
+        this.settingsForm = this.modal.querySelector('#huggingface-settings-form');
+        this.settingsApiKeyInput = this.modal.querySelector('#huggingface-settings-api-key');
+        this.settingsGlobalRootInput = this.modal.querySelector('#huggingface-settings-global-root');
+        this.settingsSetGlobalRootButton = this.modal.querySelector('#huggingface-settings-set-global-root');
+        this.settingsClearGlobalRootButton = this.modal.querySelector('#huggingface-settings-clear-global-root');
+        this.settingsConnectionsInput = this.modal.querySelector('#huggingface-settings-connections');
+        this.settingsDefaultTypeSelect = this.modal.querySelector('#huggingface-settings-default-type');
+        this.settingsAutoOpenCheckbox = this.modal.querySelector('#huggingface-settings-auto-open-status');
+        this.settingsHideMatureCheckbox = this.modal.querySelector('#huggingface-settings-hide-mature');
+        this.settingsNsfwThresholdInput = this.modal.querySelector('#huggingface-settings-nsfw-threshold');
+        this.settingsSaveButton = this.modal.querySelector('#huggingface-settings-save');
 
         // Toast Notification
-        this.toastElement = this.modal.querySelector('#civitai-toast');
+        this.toastElement = this.modal.querySelector('#huggingface-toast');
 
         // Collect tabs and contents
         this.tabs = {};
-        this.modal.querySelectorAll('.civitai-downloader-tab').forEach(tab => {
+        this.modal.querySelectorAll('.huggingface-downloader-tab').forEach(tab => {
             this.tabs[tab.dataset.tab] = tab;
         });
         this.tabContents = {};
-        this.modal.querySelectorAll('.civitai-downloader-tab-content').forEach(content => {
-            const tabName = content.id.replace('civitai-tab-', '');
+        this.modal.querySelectorAll('.huggingface-downloader-tab-content').forEach(content => {
+            const tabName = content.id.replace('huggingface-tab-', '');
             if (tabName) this.tabContents[tabName] = content;
         });
     }
 
     async initializeUI() {
-        console.info("[Civicomfy] Initializing UI components...");
+        console.info("[HuggingFace] Initializing UI components...");
         await this.populateModelTypes();
         await this.populateBaseModels();
         this.loadAndApplySettings();
@@ -134,9 +134,9 @@ export class CivitaiDownloaderUI {
     }
 
     async populateModelTypes() {
-        console.log("[Civicomfy] Populating model types...");
+        console.log("[HuggingFace] Populating model types...");
         try {
-            const types = await CivitaiDownloaderAPI.getModelTypes();
+            const types = await HuggingFaceDownloaderAPI.getModelTypes();
             if (!types || typeof types !== 'object' || Object.keys(types).length === 0) {
                  throw new Error("Received invalid model types data format.");
             }
@@ -158,7 +158,7 @@ export class CivitaiDownloaderUI {
         // After types are populated, load subdirs for the current selection
         await this.loadAndPopulateSubdirs(this.downloadModelTypeSelect.value);
         } catch (error) {
-            console.error("[Civicomfy] Failed to get or populate model types:", error);
+            console.error("[HuggingFace] Failed to get or populate model types:", error);
             this.showToast('Failed to load model types', 'error');
             this.downloadModelTypeSelect.innerHTML = '<option value="checkpoints">Checkpoints (Default)</option>';
             this.modelTypes = { "checkpoints": "Checkpoints (Default)" };
@@ -167,7 +167,7 @@ export class CivitaiDownloaderUI {
 
     async loadAndPopulateSubdirs(modelType) {
         try {
-            const res = await CivitaiDownloaderAPI.getModelDirs(modelType);
+            const res = await HuggingFaceDownloaderAPI.getModelDirs(modelType);
             const select = this.subdirSelect;
             if (!select) return;
             const current = select.value;
@@ -194,7 +194,7 @@ export class CivitaiDownloaderUI {
                 this.saveBasePathHint.textContent = basePath ? `Base path: ${basePath}` : '';
             }
         } catch (e) {
-            console.error('[Civicomfy] Failed to load subdirectories:', e);
+            console.error('[HuggingFace] Failed to load subdirectories:', e);
             if (this.subdirSelect) {
                 this.subdirSelect.innerHTML = '<option value="">(root)</option>';
             }
@@ -207,9 +207,9 @@ export class CivitaiDownloaderUI {
     // (loadAndPopulateRoots removed; dynamic types already reflect models/ subfolders)
 
     async populateBaseModels() {
-        console.log("[Civicomfy] Populating base models...");
+        console.log("[HuggingFace] Populating base models...");
         try {
-            const result = await CivitaiDownloaderAPI.getBaseModels();
+            const result = await HuggingFaceDownloaderAPI.getBaseModels();
             if (!result || !Array.isArray(result.base_models)) {
                 throw new Error("Invalid base models data format received.");
             }
@@ -223,7 +223,7 @@ export class CivitaiDownloaderUI {
                 this.searchBaseModelSelect.appendChild(option);
             });
         } catch (error) {
-             console.error("[Civicomfy] Failed to get or populate base models:", error);
+             console.error("[HuggingFace] Failed to get or populate base models:", error);
              this.showToast('Failed to load base models list', 'error');
         }
     }
@@ -306,10 +306,10 @@ export class CivitaiDownloaderUI {
     renderSearchResults = (items) => renderSearchResults(this, items);
     renderDownloadPreview = (data) => renderDownloadPreview(this, data);
     
-    // --- Auto-select model type based on Civitai model type ---
-    inferFolderFromCivitaiType(civitaiType) {
-        if (!civitaiType || typeof civitaiType !== 'string') return null;
-        const t = civitaiType.trim().toLowerCase();
+    // --- Auto-select model type based on HuggingFace model type ---
+    inferFolderFromHuggingFaceType(huggingfaceType) {
+        if (!huggingfaceType || typeof huggingfaceType !== 'string') return null;
+        const t = huggingfaceType.trim().toLowerCase();
         const keys = Object.keys(this.modelTypes || {});
         if (keys.length === 0) return null;
 
@@ -320,7 +320,7 @@ export class CivitaiDownloaderUI {
         if (exists(t)) return t;
         if (exists(`${t}s`)) return `${t}s`;
 
-        // Common mappings from Civitai types to ComfyUI folders
+        // Common mappings from HuggingFace types to ComfyUI folders
         const candidates = [];
         const addIfExists = (k) => { if (exists(k)) candidates.push(k); };
 
@@ -377,9 +377,9 @@ export class CivitaiDownloaderUI {
         return null;
     }
 
-    async autoSelectModelTypeFromCivitai(civitaiType) {
+    async autoSelectModelTypeFromHuggingFace(huggingfaceType) {
         try {
-            const folder = this.inferFolderFromCivitaiType(civitaiType);
+            const folder = this.inferFolderFromHuggingFaceType(huggingfaceType);
             if (!folder) return;
             if (this.downloadModelTypeSelect && this.downloadModelTypeSelect.value !== folder) {
                 this.downloadModelTypeSelect.value = folder;
@@ -388,7 +388,7 @@ export class CivitaiDownloaderUI {
                 if (this.subdirSelect) this.subdirSelect.value = '';
             }
         } catch (e) {
-            console.warn('[Civicomfy] Auto-select model type failed:', e);
+            console.warn('[HuggingFace] Auto-select model type failed:', e);
         }
     }
 
@@ -405,7 +405,7 @@ export class CivitaiDownloaderUI {
 
         const createButton = (text, page, isDisabled = false, isCurrent = false) => {
             const button = document.createElement('button');
-            button.className = `civitai-button small civitai-page-button ${isCurrent ? 'primary active' : ''}`;
+            button.className = `huggingface-button small huggingface-page-button ${isCurrent ? 'primary active' : ''}`;
             button.dataset.page = page;
             button.disabled = isDisabled;
             button.innerHTML = text;
@@ -432,7 +432,7 @@ export class CivitaiDownloaderUI {
         fragment.appendChild(createButton('Next &raquo;', currentPage + 1, currentPage === totalPages));
 
         const info = document.createElement('div');
-        info.className = 'civitai-pagination-info';
+        info.className = 'huggingface-pagination-info';
         info.textContent = `Page ${currentPage} of ${totalPages} (${totalItems.toLocaleString()} models)`;
         fragment.appendChild(info);
 

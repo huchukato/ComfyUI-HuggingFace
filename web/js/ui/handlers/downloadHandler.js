@@ -1,4 +1,4 @@
-import { CivitaiDownloaderAPI } from "../../api/civitai.js";
+import { HuggingFaceDownloaderAPI } from "../../api/huggingface.js";
 
 export function debounceFetchDownloadPreview(ui, delay = 500) {
     clearTimeout(ui.modelPreviewDebounceTimeout);
@@ -26,12 +26,12 @@ export async function fetchAndDisplayDownloadPreview(ui) {
     };
 
     try {
-        const result = await CivitaiDownloaderAPI.getModelDetails(params);
+        const result = await HuggingFaceDownloaderAPI.getModelDetails(params);
         if (result && result.success) {
             ui.renderDownloadPreview(result);
-            // Auto-select model type save location based on Civitai model type
+            // Auto-select model type save location based on HuggingFace model type
             if (result.model_type) {
-                await ui.autoSelectModelTypeFromCivitai(result.model_type);
+                await ui.autoSelectModelTypeFromHuggingFace(result.model_type);
             }
         } else {
             const message = `Failed to get details: ${result.details || result.error || 'Unknown backend error'}`;
@@ -71,14 +71,14 @@ export async function handleDownloadSubmit(ui) {
         api_key: ui.settings.apiKey
     };
 
-    const fileSelectEl = ui.modal.querySelector('#civitai-file-select');
+    const fileSelectEl = ui.modal.querySelector('#huggingface-file-select');
     if (fileSelectEl && fileSelectEl.value) {
         const fid = parseInt(fileSelectEl.value, 10);
         if (!Number.isNaN(fid)) params.file_id = fid;
     }
 
     try {
-        const result = await CivitaiDownloaderAPI.downloadModel(params);
+        const result = await HuggingFaceDownloaderAPI.downloadModel(params);
 
         if (result.status === 'queued') {
             ui.showToast(`Download queued: ${result.details?.filename || 'Model'}`, 'success');
@@ -90,7 +90,7 @@ export async function handleDownloadSubmit(ui) {
         } else if (result.status === 'exists' || result.status === 'exists_size_mismatch') {
             ui.showToast(`${result.message}`, 'info', 4000);
         } else {
-            console.warn("Unexpected success response from /civitai/download:", result);
+            console.warn("Unexpected success response from /huggingface/download:", result);
             ui.showToast(`Unexpected status: ${result.status} - ${result.message || ''}`, 'info');
         }
     } catch (error) {

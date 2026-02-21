@@ -1,8 +1,8 @@
-import { CivitaiDownloaderAPI } from "../../api/civitai.js";
+import { HuggingFaceDownloaderAPI } from "../../api/huggingface.js";
 
 export function startStatusUpdates(ui) {
     if (!ui.statusInterval) {
-        console.log("[Civicomfy] Starting status updates (every 3s)...");
+        console.log("[HuggingFace] Starting status updates (every 3s)...");
         ui.updateStatus();
         ui.statusInterval = setInterval(() => ui.updateStatus(), 3000);
     }
@@ -12,7 +12,7 @@ export function stopStatusUpdates(ui) {
     if (ui.statusInterval) {
         clearInterval(ui.statusInterval);
         ui.statusInterval = null;
-        console.log("[Civicomfy] Stopped status updates.");
+        console.log("[HuggingFace] Stopped status updates.");
     }
 }
 
@@ -20,7 +20,7 @@ export async function updateStatus(ui) {
     if (!ui.modal || !ui.modal.classList.contains('open')) return;
 
     try {
-        const newStatusData = await CivitaiDownloaderAPI.getStatus();
+        const newStatusData = await HuggingFaceDownloaderAPI.getStatus();
         if (!newStatusData || !Array.isArray(newStatusData.active) || !Array.isArray(newStatusData.queue) || !Array.isArray(newStatusData.history)) {
             throw new Error("Invalid status data structure received from server.");
         }
@@ -45,7 +45,7 @@ export async function updateStatus(ui) {
             ui.renderDownloadList(ui.statusData.history, ui.historyListContainer, 'No download history yet.');
         }
     } catch (error) {
-        console.error("[Civicomfy] Failed to update status:", error);
+        console.error("[HuggingFace] Failed to update status:", error);
         if (ui.activeTab === 'status') {
             const errorHtml = `<p style="color: var(--error-text, #ff6b6b);">${error.details || error.message}</p>`;
             if (ui.activeListContainer) ui.activeListContainer.innerHTML = errorHtml;
@@ -56,14 +56,14 @@ export async function updateStatus(ui) {
 }
 
 export async function handleCancelDownload(ui, downloadId) {
-    const button = ui.modal.querySelector(`.civitai-cancel-button[data-id="${downloadId}"]`);
+    const button = ui.modal.querySelector(`.huggingface-cancel-button[data-id="${downloadId}"]`);
     if (button) {
         button.disabled = true;
         button.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
         button.title = "Cancelling...";
     }
     try {
-        const result = await CivitaiDownloaderAPI.cancelDownload(downloadId);
+        const result = await HuggingFaceDownloaderAPI.cancelDownload(downloadId);
         ui.showToast(result.message || `Cancellation requested for ${downloadId}`, 'info');
         ui.updateStatus();
     } catch (error) {
@@ -83,7 +83,7 @@ export async function handleRetryDownload(ui, downloadId, button) {
     button.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
     button.title = "Retrying...";
     try {
-        const result = await CivitaiDownloaderAPI.retryDownload(downloadId);
+        const result = await HuggingFaceDownloaderAPI.retryDownload(downloadId);
         if (result.success) {
             ui.showToast(result.message || `Retry queued successfully!`, 'success');
             if (ui.settings.autoOpenStatusTab) ui.switchTab('status');
@@ -110,7 +110,7 @@ export async function handleOpenPath(ui, downloadId, button) {
     button.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
     button.title = "Opening...";
     try {
-        const result = await CivitaiDownloaderAPI.openPath(downloadId);
+        const result = await HuggingFaceDownloaderAPI.openPath(downloadId);
         if (result.success) {
             ui.showToast(result.message || `Opened path successfully!`, 'success');
         } else {
@@ -133,7 +133,7 @@ export async function handleClearHistory(ui) {
     ui.confirmClearYesButton.textContent = 'Clearing...';
 
     try {
-        const result = await CivitaiDownloaderAPI.clearHistory();
+        const result = await HuggingFaceDownloaderAPI.clearHistory();
         if (result.success) {
             ui.showToast(result.message || 'History cleared successfully!', 'success');
             ui.statusData.history = [];

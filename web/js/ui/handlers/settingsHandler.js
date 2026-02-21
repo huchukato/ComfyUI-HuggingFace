@@ -1,7 +1,7 @@
 import { setCookie, getCookie } from "../../utils/cookies.js";
-import { CivitaiDownloaderAPI } from "../../api/civitai.js";
+import { HuggingFaceDownloaderAPI } from "../../api/huggingface.js";
 
-const SETTINGS_COOKIE_NAME = 'civitaiDownloaderSettings';
+const SETTINGS_COOKIE_NAME = 'huggingfaceDownloaderSettings';
 
 export function getDefaultSettings() {
     return {
@@ -89,11 +89,11 @@ export function applySettings(ui) {
 export async function loadGlobalRootSetting(ui) {
     if (!ui.settingsGlobalRootInput) return;
     try {
-        const result = await CivitaiDownloaderAPI.getGlobalRoot();
+        const result = await HuggingFaceDownloaderAPI.getGlobalRoot();
         const globalRoot = (result && typeof result.global_root === 'string') ? result.global_root : '';
         ui.settingsGlobalRootInput.value = globalRoot;
     } catch (e) {
-        console.warn("[Civicomfy] Failed to load global root setting:", e);
+        console.warn("[HuggingFace] Failed to load global root setting:", e);
     }
 }
 
@@ -105,7 +105,7 @@ export async function handleSetGlobalRoot(ui) {
         return;
     }
     try {
-        const result = await CivitaiDownloaderAPI.setGlobalRoot(path);
+        const result = await HuggingFaceDownloaderAPI.setGlobalRoot(path);
         const saved = (result && typeof result.global_root === 'string') ? result.global_root : path;
         ui.settingsGlobalRootInput.value = saved;
         ui.showToast("Global root updated.", "success");
@@ -120,7 +120,7 @@ export async function handleSetGlobalRoot(ui) {
 export async function handleClearGlobalRoot(ui) {
     if (!ui.settingsGlobalRootInput) return;
     try {
-        await CivitaiDownloaderAPI.clearGlobalRoot();
+        await HuggingFaceDownloaderAPI.clearGlobalRoot();
         ui.settingsGlobalRootInput.value = "";
         ui.showToast("Global root cleared. Using default ComfyUI paths.", "success");
         if (ui.downloadModelTypeSelect) {
