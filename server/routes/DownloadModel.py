@@ -124,7 +124,7 @@ async def route_download_model(request):
             "force_redownload": force_redownload
         }
 
-        download_id = download_manager.start_download(download_info)
+        download_id = download_manager.add_to_queue(download_info)
         
         response_data = {
             "download_id": download_id,
