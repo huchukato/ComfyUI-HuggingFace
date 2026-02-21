@@ -88,6 +88,67 @@ class HuggingFaceAPI:
             return result
         return result
 
+    def search_models_meili(self, query: str = None, types: Optional[List[str]] = None,
+                            base_models: Optional[List[str]] = None,
+                            sort: str = 'Most Downloaded', limit: int = 20, page: int = 1,
+                            nsfw: Optional[bool] = None) -> Optional[Dict[str, Any]]:
+        """Searches models using HuggingFace's Meilisearch endpoint."""
+        meili_url = "https://huggingface.co/multi-search"
+        headers = {'Content-Type': 'application/json'}
+        if self.api_key:
+            headers['Authorization'] = f'Bearer {self.api_key}'
+        
+        # Build search query
+        search_query = {
+            "q": query or "",
+            "limit": limit,
+            "offset": (page - 1) * limit
+        }
+        
+        # Add filters
+        filters = []
+        
+        # Type filters
+        if types:
+            type_filter = {"type": types}
+            filters.append(type_filter)
+        
+        # Base model filters  
+        if base_models:
+            base_filter = {"base_model": base_models}
+            filters.append(base_filter)
+        
+        # NSFW filter
+        if nsfw is not None:
+            nsfw_filter = {"nsfw": nsfw}
+            filters.append(nsfw_filter)
+        
+        if filters:
+            search_query["filters"] = filters
+        
+        # Add sorting
+        sort_mapping = {
+            "Relevancy": "id:desc",
+            "Most Downloaded": "metrics.downloadCount:desc",
+            "Highest Rated": "metrics.thumbsUpCount:desc", 
+            "Most Liked": "metrics.favoriteCount:desc", 
+            "Most Discussed": "metrics.commentCount:desc", 
+            "Most Collected": "metrics.collectedCount:desc", 
+            "Most Buzz": "metrics.tippedAmountCount:desc", 
+            "Newest": "createdAt:desc", 
+        }
+        
+        if sort in sort_mapping:
+            search_query["sort"] = [sort_mapping[sort]]
+        
+        try:
+            response = requests.post(meili_url, json=search_query, headers=headers, timeout=30)
+            response.raise_for_status()
+            return response.json()
+        except requests.exceptions.RequestException as e:
+            print(f"HuggingFace Meili API Error: {e}")
+            return {"error": str(e), "status_code": getattr(e.response, 'status_code', None) if hasattr(e, 'response') else None}
+
     def get_model_files(self, model_id: str) -> Optional[Dict[str, Any]]:
         """Gets files for a specific HuggingFace model. (GET /models/{id}/tree)"""
         endpoint = f"/models/{model_id}/tree"
