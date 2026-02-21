@@ -44,17 +44,21 @@ async def route_get_model_details(request):
             license_info = model_card.data.get("license", "Unknown")
             
             # Get model info from API as fallback for stats
-            api = HuggingFaceAPI(resolved_api_key)
-            api_info = api.get_model_info(parsed_model_id)
-            
-            stats = {}
-            if api_info and not isinstance(api_info, dict) or "error" not in api_info:
-                stats = {
-                    "downloads": api_info.get("downloads", 0),
-                    "likes": api_info.get("likes", 0),
-                    "created_at": api_info.get("created_at", ""),
-                    "modified_at": api_info.get("modified_at", "")
-                }
+            try:
+                api = HuggingFaceAPI(resolved_api_key)
+                api_info = api.get_model_info(parsed_model_id)
+                
+                stats = {}
+                if api_info and not isinstance(api_info, dict) or "error" not in api_info:
+                    stats = {
+                        "downloads": api_info.get("downloads", 0),
+                        "likes": api_info.get("likes", 0),
+                        "created_at": api_info.get("created_at", ""),
+                        "modified_at": api_info.get("modified_at", "")
+                    }
+            except Exception as api_error:
+                print(f"[GetModelDetails] API info failed, using model card only: {api_error}")
+                stats = {}
             
             response_data = {
                 "model_name": model_name,
@@ -72,11 +76,36 @@ async def route_get_model_details(request):
             
         except Exception as e:
             print(f"[GetModelDetails] Error loading model card: {e}")
-            # Fallback to basic info
+            # Try to get at least basic info from API
+            try:
+                api = HuggingFaceAPI(resolved_api_key)
+                api_info = api.get_model_info(parsed_model_id)
+                
+                if api_info and not isinstance(api_info, dict) or "error" not in api_info:
+                    return web.json_response({
+                        "model_name": api_info.get("id", parsed_model_id.split('/')[-1]),
+                        "creator_username": api_info.get("author", "Unknown Creator"),
+                        "description": api_info.get("description", "No description available"),
+                        "base_model": [],
+                        "tags": api_info.get("tags", []),
+                        "license": api_info.get("license", "Unknown"),
+                        "stats": {
+                            "downloads": api_info.get("downloads", 0),
+                            "likes": api_info.get("likes", 0),
+                            "created_at": api_info.get("created_at", ""),
+                            "modified_at": api_info.get("modified_at", "")
+                        },
+                        "model_id": parsed_model_id,
+                        "huggingface_model_name": api_info.get("id", parsed_model_id.split('/')[-1])
+                    })
+            except Exception as api_error:
+                print(f"[GetModelDetails] API fallback also failed: {api_error}")
+            
+            # Final fallback to minimal info
             return web.json_response({
                 "model_name": parsed_model_id.split('/')[-1],
                 "creator_username": "Unknown",
-                "description": "No description available",
+                "description": "Model details not available",
                 "base_model": [],
                 "tags": [],
                 "license": "Unknown",
