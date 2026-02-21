@@ -91,8 +91,10 @@ def get_model_dir(model_type: str, explicit_save_root: str = "", selected_subdir
                     # Fallback to custom_nodes directory
                     return os.path.join(folder_paths.base_path, "custom_nodes", normalized_type)
             else:
-                # For other types, use custom_nodes
-                return os.path.join(folder_paths.base_path, "custom_nodes", normalized_type)
+                # For other types, use our extension directory instead of custom_nodes
+                from ..config import PLUGIN_ROOT
+                return os.path.join(PLUGIN_ROOT, "other_models")
+            
         except:
             # Fallback to base_path + type
             return os.path.join(folder_paths.base_path, normalized_type)
