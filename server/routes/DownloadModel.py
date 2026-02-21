@@ -135,7 +135,7 @@ async def route_download_model(request):
             "huggingface_model_info": model_info,
             "save_path": save_path,
             "filename": final_filename,
-            "status": "started"
+            "status": "queued"  # Changed from "started" to "queued" to match frontend expectation
         }
 
         return web.json_response(response_data)
