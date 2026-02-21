@@ -126,9 +126,9 @@ export function modalTemplate(settings = {}) {
               <div class="huggingface-settings-section">
                 <h4>API & Defaults</h4>
                 <div class="huggingface-form-group">
-                  <label for="huggingface-settings-api-key">HuggingFace API Key (Optional)</label>
+                  <label for="huggingface-settings-api-key">HuggingFace HF token (Optional)</label>
                   <input type="password" id="huggingface-settings-api-key" class="huggingface-input" placeholder="Enter API key for higher limits / authenticated access" autocomplete="new-password">
-                  <p style="font-size: 0.85em; color: #bbb; margin-top: 5px;">Needed for some downloads/features. Leave blank to use server env <code>HUGGINGFACE_API_KEY</code>. Find keys at huggingface.com/user/account</p>
+                  <p style="font-size: 0.85em; color: #bbb; margin-top: 5px;">Needed for some downloads/features. Leave blank to use server env <code>HUGGINGFACE_TOKEN</code>. Find keys at huggingface.com/user/account</p>
                 </div>
                 <div class="huggingface-form-group">
                   <label for="huggingface-settings-global-root">Global Download Root (Optional)</label>

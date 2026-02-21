@@ -22,7 +22,7 @@ def resolve_huggingface_api_key(payload: Optional[Dict[str, Any]] = None) -> Opt
     """
     Resolve API key priority:
     1) Explicit key from request payload (`api_key`)
-    2) `HUGGINGFACE_API_KEY` environment variable
+    2) `HUGGINGFACE_TOKEN` environment variable
     """
     request_key = ""
     if isinstance(payload, dict):
@@ -33,7 +33,7 @@ def resolve_huggingface_api_key(payload: Optional[Dict[str, Any]] = None) -> Opt
     if request_key:
         return request_key
 
-    env_key = os.getenv("HUGGINGFACE_API_KEY", "").strip()
+    env_key = os.getenv("HUGGINGFACE_TOKEN", "").strip()
     if env_key:
         return env_key
 

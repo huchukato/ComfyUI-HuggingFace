@@ -26,9 +26,9 @@ class HuggingFaceAPI:
         self.base_headers = {'Content-Type': 'application/json'}
         if api_key:
             self.base_headers["Authorization"] = f"Bearer {api_key}"
-            print("[HuggingFace API] Using API Key.")
+            print("[HuggingFace API] Using HF token for private repositories.")
         else:
-            print("[HuggingFace API] No API Key provided.")
+            print("[HuggingFace API] No HF token provided. Only public repositories accessible.")
 
     def _get_request_headers(self, method: str, has_json_data: bool) -> Dict[str, str]:
         """Returns headers for a specific request."""
