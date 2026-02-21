@@ -13,6 +13,10 @@ except ImportError:
     HF_HUB_AVAILABLE = False
     print("[HuggingFace API] huggingface_hub not available, falling back to manual downloads")
 
+# Try to use huggingface_hub CLI as fallback
+import subprocess
+import sys
+
 class HuggingFaceAPI:
     """Simple wrapper for interacting with the HuggingFace API."""
     BASE_URL = "https://huggingface.co/api"
@@ -196,9 +200,33 @@ class HuggingFaceAPI:
                 return result  # Returns the local file path
             except Exception as e:
                 print(f"[HuggingFace API] huggingface_hub download failed: {e}")
+                print("[HuggingFace API] Trying CLI fallback...")
+        
+        # Try CLI fallback
+        if local_dir:
+            try:
+                print(f"[HuggingFace API] Using CLI fallback for download: {model_id}/{filename}")
+                cmd = [
+                    sys.executable, "-m", "huggingface_hub", "download",
+                    model_id, filename,
+                    "--local-dir", local_dir,
+                    "--local-dir-use-symlinks", "False"
+                ]
+                if self.api_key:
+                    cmd.extend(["--token", self.api_key])
+                
+                result = subprocess.run(cmd, capture_output=True, text=True, timeout=300)
+                if result.returncode == 0:
+                    file_path = os.path.join(local_dir, filename)
+                    return file_path
+                else:
+                    print(f"[HuggingFace API] CLI download failed: {result.stderr}")
+                    print("[HuggingFace API] Falling back to manual download")
+            except Exception as e:
+                print(f"[HuggingFace API] CLI fallback failed: {e}")
                 print("[HuggingFace API] Falling back to manual download")
         
-        # Fallback to manual download
+        # Final fallback to manual download
         endpoint = f"/models/{model_id}/resolve/main/{filename}"
         result = self._request("GET", endpoint, stream=True)
         if isinstance(result, dict) and "error" in result:
