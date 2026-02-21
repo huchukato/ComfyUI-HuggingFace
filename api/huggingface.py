@@ -5,6 +5,14 @@ import requests
 import json
 from typing import List, Optional, Dict, Any, Union
 
+# Try to import huggingface_hub for better downloads
+try:
+    from huggingface_hub import hf_hub_download, snapshot_download
+    HF_HUB_AVAILABLE = True
+except ImportError:
+    HF_HUB_AVAILABLE = False
+    print("[HuggingFace API] huggingface_hub not available, falling back to manual downloads")
+
 class HuggingFaceAPI:
     """Simple wrapper for interacting with the HuggingFace API."""
     BASE_URL = "https://huggingface.co/api"
@@ -165,8 +173,26 @@ class HuggingFaceAPI:
             return result
         return result
 
-    def download_file(self, model_id: str, filename: str) -> Optional[requests.Response]:
-        """Downloads a specific file from HuggingFace. (GET /models/{id}/resolve/main/{filename})"""
+    def download_file(self, model_id: str, filename: str, local_dir: str = None) -> Optional[Union[requests.Response, str]]:
+        """Downloads a specific file from HuggingFace. Uses huggingface_hub if available."""
+        if HF_HUB_AVAILABLE and local_dir:
+            try:
+                # Use official huggingface_hub library
+                print(f"[HuggingFace API] Using huggingface_hub for download: {model_id}/{filename}")
+                result = hf_hub_download(
+                    repo_id=model_id,
+                    filename=filename,
+                    local_dir=local_dir,
+                    local_dir_use_symlinks=False,
+                    resume_download=True,
+                    token=self.api_key
+                )
+                return result  # Returns the local file path
+            except Exception as e:
+                print(f"[HuggingFace API] huggingface_hub download failed: {e}")
+                print("[HuggingFace API] Falling back to manual download")
+        
+        # Fallback to manual download
         endpoint = f"/models/{model_id}/resolve/main/{filename}"
         result = self._request("GET", endpoint, stream=True)
         if isinstance(result, dict) and "error" in result:
