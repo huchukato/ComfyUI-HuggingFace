@@ -174,3 +174,15 @@ def parse_huggingface_input(url_or_id: str) -> tuple[str | None, str | None]:
     
     print(f"Input '{url_or_id}' is not a recognizable HF model ID or URL.")
     return None, None
+
+def get_model_folder_paths(model_type: str) -> List[str]:
+    """Get all folder paths for a given model type."""
+    try:
+        normalized_type = _normalize_model_type(model_type)
+        return folder_paths.get_folder_paths(normalized_type)
+    except:
+        return []
+
+def get_model_type_folder_name(model_type: str) -> str:
+    """Get the standard folder name for a model type."""
+    return _normalize_model_type(model_type)
