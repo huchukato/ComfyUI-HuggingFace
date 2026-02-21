@@ -166,7 +166,7 @@ def _list_subdirs(root_dir: str, max_entries: int = 5000):
             break
     return sorted(rel_dirs)
 
-@prompt_server.routes.get("/huggingface/model_dirs")
+@prompt_server.routes.get("/api/huggingface/model_dirs")
 async def route_get_model_dirs(request):
     """List the base directory (or provided root) and all subdirectories for a given model type."""
     model_type = request.query.get("type", "checkpoints").lower().strip()
@@ -186,7 +186,7 @@ async def route_get_model_dirs(request):
     except Exception as e:
         return web.json_response({"error": "Failed to list directories", "details": str(e)}, status=500)
 
-@prompt_server.routes.post("/huggingface/create_dir")
+@prompt_server.routes.post("/api/huggingface/create_dir")
 async def route_create_model_dir(request):
     """Create a new subdirectory under a model type's base directory."""
     try:
@@ -223,7 +223,7 @@ async def route_create_model_dir(request):
     except Exception as e:
         return web.json_response({"error": "Failed to create directory", "details": str(e)}, status=500)
 
-@prompt_server.routes.post("/huggingface/create_model_type")
+@prompt_server.routes.post("/api/huggingface/create_model_type")
 async def route_create_model_type(request):
     """Create a new first-level folder under the main models directory."""
     try:
@@ -254,7 +254,7 @@ async def route_create_model_type(request):
     except Exception as e:
         return web.json_response({"error": "Failed to create model type folder", "details": str(e)}, status=500)
 
-@prompt_server.routes.get("/huggingface/model_roots")
+@prompt_server.routes.get("/api/huggingface/model_roots")
 async def route_get_model_roots(request):
     """Return all known root directories for a model type (ComfyUI + plugin custom roots)."""
     model_type = request.query.get("type", "checkpoints").lower().strip()
@@ -267,7 +267,7 @@ async def route_get_model_roots(request):
         "effective_root": _get_effective_base_dir(model_type),
     })
 
-@prompt_server.routes.post("/huggingface/create_root")
+@prompt_server.routes.post("/api/huggingface/create_root")
 async def route_create_model_root(request):
     """Create a new root directory for a model type and register it in plugin config.
        Note: ComfyUI may require restart to recognize this root globally; the plugin uses it immediately.
@@ -297,7 +297,7 @@ async def route_create_model_root(request):
     except Exception as e:
         return web.json_response({"error": "Failed to create root", "details": str(e)}, status=500)
 
-@prompt_server.routes.get("/huggingface/global_root")
+@prompt_server.routes.get("/api/huggingface/global_root")
 async def route_get_global_root(request):
     """Return the persisted global download root (if configured)."""
     global_root = get_global_default_root()
@@ -306,7 +306,7 @@ async def route_get_global_root(request):
         "enabled": bool(global_root),
     })
 
-@prompt_server.routes.post("/huggingface/global_root")
+@prompt_server.routes.post("/api/huggingface/global_root")
 async def route_set_global_root(request):
     """Persist a global download root used as: <global_root>/<model_type_folder>."""
     try:
@@ -326,7 +326,7 @@ async def route_set_global_root(request):
     except Exception as e:
         return web.json_response({"error": "Failed to set global root", "details": str(e)}, status=500)
 
-@prompt_server.routes.post("/huggingface/global_root/clear")
+@prompt_server.routes.post("/api/huggingface/global_root/clear")
 async def route_clear_global_root(request):
     """Clear the persisted global download root."""
     try:

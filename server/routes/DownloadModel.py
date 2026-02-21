@@ -16,7 +16,7 @@ from ...config import METADATA_SUFFIX, PREVIEW_SUFFIX
 
 prompt_server = server.PromptServer.instance
 
-@prompt_server.routes.post("/huggingface/download")
+@prompt_server.routes.post("/api/huggingface/download")
 async def route_download_model(request):
     """API Endpoint to initiate a download."""
     try:

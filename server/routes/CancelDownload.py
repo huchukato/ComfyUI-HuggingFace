@@ -9,7 +9,7 @@ from ...downloader.manager import manager as download_manager
 
 prompt_server = server.PromptServer.instance
 
-@prompt_server.routes.post("/huggingface/cancel")
+@prompt_server.routes.post("/api/huggingface/cancel")
 async def route_cancel_download(request):
     """API Endpoint to cancel a download."""
     try:

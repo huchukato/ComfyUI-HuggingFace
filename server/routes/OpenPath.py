@@ -10,7 +10,7 @@ from ...downloader.manager import manager as download_manager
 
 prompt_server = server.PromptServer.instance
 
-@prompt_server.routes.post("/huggingface/open_path")
+@prompt_server.routes.post("/api/huggingface/open_path")
 async def route_open_path(request):
     """API Endpoint to open the containing folder of a completed download."""
     if not download_manager:
