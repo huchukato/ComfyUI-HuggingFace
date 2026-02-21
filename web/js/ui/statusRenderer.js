@@ -23,10 +23,12 @@ export function renderDownloadList(ui, items, container, emptyMessage) {
         huggingface_model_name: item.huggingface_model_name,
         model_name: item.model_name,
         model: item.model,
-        version_name: item.version_name
+        version_name: item.version_name,
+        full_item: item  // Log the full item to see all available fields
     });
     
     const modelName = item.huggingface_model_name || item.model_name || item.model?.name || 'Unknown Model';
+    console.log(`[DEBUG Frontend] Final modelName: ${modelName}`);
     const versionName = item.version_name || 'Unknown Version';
     const filename = item.filename || 'N/A';
     const addedTime = item.added_time || null;
