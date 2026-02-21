@@ -120,7 +120,16 @@ async def route_download_model(request):
             "huggingface_model_info": model_info,
             "huggingface_filename": target_filename,
             "num_connections": num_connections,
-            "force_redownload": force_redownload
+            "force_redownload": force_redownload,
+            # Add missing fields to prevent warnings
+            "api_key": resolved_api_key,
+            "known_size": None,
+            "huggingface_version_info": {},
+            "huggingface_primary_file": None,
+            "thumbnail": None,
+            "model_version_id": None,
+            "custom_filename": custom_filename_input,
+            "huggingface_model_name": model_info.get("name", target_model_id.split('/')[-1])
         }
 
         download_id = download_manager.add_to_queue(download_info)
