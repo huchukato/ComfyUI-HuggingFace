@@ -41,10 +41,10 @@ async def route_search_models(request):
             }
             
             if query:
-                search_params["query"] = query
+                search_params["search"] = query
             
             # Map model types to tags
-            if model_type_keys and "any" not in model_type_keys:
+            if model_type_keys:
                 tags = []
                 for key in model_type_keys:
                     api_type = HUGGINGFACE_API_TYPE_MAP.get(key.lower())
@@ -57,14 +57,14 @@ async def route_search_models(request):
             if base_model_filters:
                 base_model_query = " ".join([f'base_model:{bm}' for bm in base_model_filters])
                 if query:
-                    search_params["query"] = f"{query} {base_model_query}"
+                    search_params["search"] = f"{query} {base_model_query}"
                 else:
-                    search_params["query"] = base_model_query
+                    search_params["search"] = base_model_query
             
-            print(f"[Server Search] huggingface_hub: query='{search_params.get('query', '<none>')}', tags={search_params.get('tags', 'Any')}, sort={sort}, limit={limit}")
+            print(f"[Server Search] huggingface_hub: search='{search_params.get('search', '<none>')}', tags={search_params.get('tags', 'Any')}, sort={sort}, limit={limit}")
             
             # Perform search
-            models = hf_api.search_models(**search_params)
+            models = hf_api.list_models(**search_params)
             
             # Format results for frontend
             formatted_models = []
