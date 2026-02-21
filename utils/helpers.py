@@ -88,23 +88,27 @@ def get_model_dir(model_type: str, explicit_save_root: str = "", selected_subdir
                 try:
                     return folder_paths.get_folder_paths(normalized_type)[0]
                 except:
-                    # Fallback: try unet first for diffusion models
-                    if normalized_type in ["diffusion_models", "diffusers"]:
+                    # Fallback: try unet for diffusion_models
+                    if normalized_type == "diffusion_models":
                         try:
-                            return folder_paths.get_folder_paths("unet")[0]
+                            return folder_paths.get_folder_paths("diffusion_models")[0]
                         except:
-                            # If unet doesn't exist, use checkpoints
-                            return folder_paths.get_folder_paths("checkpoints")[0]
+                            # If diffusion_models doesn't exist, try unet
+                            try:
+                                return folder_paths.get_folder_paths("unet")[0]
+                            except:
+                                # Fallback to checkpoints
+                                return folder_paths.get_folder_paths("checkpoints")[0]
                     elif normalized_type == "unet":
                         try:
                             return folder_paths.get_folder_paths("unet")[0]
                         except:
-                            # If unet doesn't exist, use checkpoints
+                            # Fallback to checkpoints
                             return folder_paths.get_folder_paths("checkpoints")[0]
                     else:
-                        # For other types, try unet first
+                        # For other types, try diffusion_models first
                         try:
-                            return folder_paths.get_folder_paths("unet")[0]
+                            return folder_paths.get_folder_paths("diffusion_models")[0]
                         except:
                             # Fallback to checkpoints
                             return folder_paths.get_folder_paths("checkpoints")[0]
