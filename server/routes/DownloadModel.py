@@ -51,7 +51,9 @@ async def route_download_model(request):
         if parsed_filename:
             # Direct download from URL - skip API calls
             target_filename = parsed_filename
-            model_info = {"id": target_model_id, "name": target_model_id}
+            # Try to get model name from the model_id itself
+            model_name = target_model_id.split('/')[-1] if target_model_id else "Unknown Model"
+            model_info = {"id": target_model_id, "name": model_name}
             print(f"[HF Download] Direct download file: {target_filename}")
         else:
             # Get model info and file list
@@ -62,7 +64,9 @@ async def route_download_model(request):
                 print(f"[HF Download] Model info failed, trying direct download")
                 # Fallback: try direct download without file listing
                 target_filename = parsed_filename if parsed_filename else "model.safetensors"  # Use parsed or default
-                model_info = {"id": target_model_id, "name": target_model_id}
+                # Try to get model name from the model_id itself
+                model_name = target_model_id.split('/')[-1] if target_model_id else "Unknown Model"
+                model_info = {"id": target_model_id, "name": model_name}
             else:
                 # Get file list
                 files_info = api.get_model_files(target_model_id)
