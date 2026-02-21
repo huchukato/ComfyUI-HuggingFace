@@ -1,56 +1,96 @@
 # ComfyUI-HuggingFace - HuggingFace Model Downloader for ComfyUI
 
-Civicomfy seamlessly integrates HuggingFace's vast model repository directly into ComfyUI, allowing you to search, download, and organize AI models without leaving your workflow.
+ComfyUI-HuggingFace seamlessly integrates HuggingFace's vast model repository directly into ComfyUI, allowing you to search, download, and organize AI models without leaving your workflow.
 
 ## Features
 
 - **Integrated Model Search**: Search HuggingFace's extensive library directly from ComfyUI
-- **One-Click Downloads**: Download models with associated metadata and thumbnails
+- **One-Click Downloads**: Download models with associated metadata and files
 - **Automatic Organization**: Models are automatically saved to their appropriate directories
 - **Clean UI**: Clean, intuitive interface that complements ComfyUI's aesthetic
+- **HF API Integration**: Full support for HuggingFace API endpoints
+- **Model Type Detection**: Automatically categorizes models (checkpoints, loras, etc.)
 
 ## Installation
 
-Git clone
+### Git Clone
 ```bash
 cd ComfyUI/custom_nodes
-git clone https://github.com/MoonGoblinDev/Civicomfy.git
+git clone https://github.com/huchukato/ComfyUI-HuggingFace.git
 ```
 
-Comfy-CLI
-```bash
-comfy node registry-install civicomfy
-```
-
-ComfyUI Manager
-
-<img width="813" alt="Screenshot 2025-04-08 at 11 42 46" src="https://github.com/user-attachments/assets/5d4f5261-88f6-4aa0-9c66-d1811bb49e09" />
+### ComfyUI Manager
+1. Open ComfyUI Manager
+2. Search for "ComfyUI-HuggingFace"
+3. Click Install
 
 ## Usage
 
-1. Start ComfyUI with Civicomfy installed
-2. Access the Civicomfy panel from the Civicomfy menu button at the right top area.
-3. Search for models
+1. Start ComfyUI with ComfyUI-HuggingFace installed
+2. Access the HuggingFace panel from the HuggingFace menu button at the right top area
+3. Search for models using HuggingFace's powerful search
 4. Click the download button on any model to save it to your local installation
 5. Models become immediately available in ComfyUI nodes
 
 ## Configuration
 
-- Enter your HuggingFace API Token in the settings, or set `CIVITAI_API_KEY` in the server environment (useful for cloud deployments like RunPod).
-- Optional: set a **Global Download Root** in Civicomfy settings.
-  - When set, Civicomfy saves to `<global_root>/<model_type>` (for example `/runpod-volume/ComfyUI/checkpoints` or `/runpod-volume/ComfyUI/loras`).
-  - When empty, Civicomfy uses the default ComfyUI paths (`folder_paths` / `extra_model_paths.yaml`).
-  - The global root is persisted on disk in `custom_nodes/Civicomfy/root_settings.json`.
+- **HuggingFace API Token**: Optional but recommended for higher rate limits
+  - Set `HUGGINGFACE_API_KEY` environment variable
+  - Or enter token in ComfyUI-HuggingFace settings
+- **Global Download Root**: Optional custom download directory
+  - When set, saves to `<global_root>/<model_type>` 
+  - Example: `/runpod-volume/ComfyUI/checkpoints`
+  - When empty, uses default ComfyUI paths
 
-## Screenshots
-<img width="911" alt="Screenshot 2025-04-08 at 11 24 40" src="https://github.com/user-attachments/assets/b9be0c32-729d-490e-be61-2dc072cd9b15" />
-<img width="911" alt="Screenshot 2025-04-08 at 11 23 17" src="https://github.com/user-attachments/assets/cb747c22-afd0-4baf-a9a2-39c70fb11e46" />
-<img width="911" alt="Screenshot 2025-04-08 at 11 25 15" src="https://github.com/user-attachments/assets/02b6d841-a0fa-484c-91a4-4095a7554c3f" />
-<img width="911" alt="Screenshot 2025-04-08 at 11 25 24" src="https://github.com/user-attachments/assets/20fcfcb5-3345-4a72-89fe-ee9c50626ebc" />
+## Supported Model Types
 
+- **Checkpoints**: Main model files (.safetensors, .bin)
+- **LoRAs**: Low-Rank Adaptation models
+- **Text Encoders**: CLIP and other encoder models
+- **VAEs**: Variational Autoencoders
+- **Embeddings**: Text embedding models
+- **Custom**: Any model type from HuggingFace
 
+## API Endpoints Used
 
+- `/api/models` - Model search
+- `/api/models/{id}` - Model information
+- `/api/models/{id}/tree` - File listing
+- `/api/models/{id}/resolve/main/{filename}` - File downloads
+
+## Development
+
+This is a fork of Civicomfy, adapted for HuggingFace integration:
+
+- Replaced Civitai API with HuggingFace API
+- Updated URL parsing for HF model structure
+- Maintained the same clean UI/UX
+- Added HF-specific features
 
 ## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
+
+### Areas for Contribution
+
+- Additional model type support
+- UI/UX improvements
+- Performance optimizations
+- Bug fixes and testing
+
+## Requirements
+
+- ComfyUI
+- Python 3.8+
+- requests library
+- Valid HuggingFace account (optional)
+
+## License
+
+This project follows the same license as the original Civicomfy project.
+
+## Acknowledgments
+
+- Based on [Civicomfy](https://github.com/MoonGoblinDev/Civicomfy) by MoonGoblinDev
+- HuggingFace for the amazing model repository
+- ComfyUI community for feedback and support
