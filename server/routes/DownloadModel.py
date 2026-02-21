@@ -129,8 +129,11 @@ async def route_download_model(request):
 
         download_id = download_manager.add_to_queue(download_info)
         
-        # Extract model name from model_id for better display
-        model_display_name = target_model_id.split('/')[-1] if target_model_id else "Unknown Model"
+        # Extract model name from model_info if available, otherwise from model_id
+        if model_info and isinstance(model_info, dict) and model_info.get('name'):
+            model_display_name = model_info['name']
+        else:
+            model_display_name = target_model_id.split('/')[-1] if target_model_id else "Unknown Model"
         
         response_data = {
             "download_id": download_id,
