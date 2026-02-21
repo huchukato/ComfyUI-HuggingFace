@@ -34,8 +34,8 @@ COMFYUI_ROOT_DIR = folder_paths.base_path
 # The folder_paths_type is used by ComfyUI's folder_paths.get_directory_by_type().
 MODEL_TYPE_DIRS = {
     "checkpoint": ("Checkpoint", "checkpoints"),
-    "diffusionmodels": ("Diffusion Models", "diffusers"),
-    "unet": ("Unet", "unet"),
+    "diffusionmodels": ("Diffusion Models", "diffusion_models"),  # Wan 2.2 and similar
+    "unet": ("Unet", "unet"),  # GGUF models
     "lora": ("Lora", "loras"),
     "locon": ("LoCon", "loras"),
     "lycoris": ("LyCORIS", "loras"),
@@ -67,7 +67,7 @@ HUGGINGFACE_API_TYPE_MAP = {
     "wildcards": "Wildcards",
     "upscaler": "Upscaler", 
     "unet": "UNET",
-    "diffusionmodels": "Checkpoint", # No specific type, map to checkpoint
+    "diffusionmodels": "Diffusion Model", # Wan 2.2 and similar
 }
 
 AVAILABLE_MEILI_BASE_MODELS = [
