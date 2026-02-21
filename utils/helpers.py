@@ -19,8 +19,8 @@ MODEL_TYPE_ALIASES = {
     "diffusionmodel": "diffusion_models",
     "diffusionmodels": "diffusion_models",
     "diffusion_model": "diffusion_models",
-    "diffusion_models": "diffusion_models",
-    "diffusers": "diffusion_models",  # Wan 2.2 and similar go here
+    "diffusion_models": "diffusion_models", # Wan 2.2 and similar go here
+    "diffusers": "diffusers",  
     "unet": "unet",  # GGUF models go here
     "lora": "loras",
     "loras": "loras",
