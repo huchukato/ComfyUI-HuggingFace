@@ -1,4 +1,4 @@
-import { CivitaiDownloaderAPI } from "../../api/civitai.js";
+import { HuggingFaceDownloaderAPI } from "../../api/huggingface.js";
 
 export async function handleSearchSubmit(ui) {
     ui.searchSubmitButton.disabled = true;
@@ -18,7 +18,7 @@ export async function handleSearchSubmit(ui) {
     };
 
     try {
-        const response = await CivitaiDownloaderAPI.searchModels(params);
+        const response = await HuggingFaceDownloaderAPI.searchModels(params);
         if (!response || !response.metadata || !Array.isArray(response.items)) {
             console.error("Invalid search response structure:", response);
             throw new Error("Received invalid data from search API.");

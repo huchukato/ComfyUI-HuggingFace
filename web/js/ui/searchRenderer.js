@@ -1,7 +1,7 @@
 // Rendering of search results list
 // Usage: renderSearchResults(uiInstance, itemsArray)
 
-const PLACEHOLDER_IMAGE_URL = `/extensions/Civicomfy/images/placeholder.jpeg`;
+const PLACEHOLDER_IMAGE_URL = `/extensions/HuggingFace/images/placeholder.jpeg`;
 
 export function renderSearchResults(ui, items) {
   ui.feedback?.ensureFontAwesome();
@@ -59,7 +59,7 @@ export function renderSearchResults(ui, items) {
     }
 
     const listItem = document.createElement('div');
-    listItem.className = 'civitai-search-item';
+    listItem.className = 'huggingface-search-item';
     listItem.dataset.modelId = modelId;
 
     const MAX_VISIBLE_VERSIONS = 3;
@@ -76,7 +76,7 @@ export function renderSearchResults(ui, items) {
       const versionName = version.name || 'Unknown Version';
       const baseModel = version.baseModel || 'N/A';
       return `
-        <button class="civitai-button primary small civitai-search-download-button"
+        <button class="huggingface-button primary small huggingface-search-download-button"
                 data-model-id="${modelId}"
                 data-version-id="${versionId || ''}"
                 data-model-type="${modelTypeApi || ''}"
@@ -89,7 +89,7 @@ export function renderSearchResults(ui, items) {
     const hasMoreVersions = allVersions.length > visibleVersions.length;
     const totalVersionCount = allVersions.length;
     const moreButtonHtml = hasMoreVersions ? `
-      <button class="civitai-button secondary small show-all-versions-button"
+      <button class="huggingface-button secondary small show-all-versions-button"
               data-model-id="${modelId}"
               data-total-versions="${totalVersionCount}"
               title="Show all ${totalVersionCount} versions">
@@ -107,7 +107,7 @@ export function renderSearchResults(ui, items) {
             const versionName = version.name || 'Unknown Version';
             const baseModel = version.baseModel || 'N/A';
             return `
-              <button class="civitai-button primary small civitai-search-download-button"
+              <button class="huggingface-button primary small huggingface-search-download-button"
                       data-model-id="${modelId}"
                       data-version-id="${versionId || ''}"
                       data-model-type="${modelTypeApi || ''}"
@@ -125,7 +125,7 @@ export function renderSearchResults(ui, items) {
     const imageAlt = `${modelName} thumbnail`;
     if (thumbnailUrl && typeof thumbnailUrl === 'string' && thumbnailType === 'video') {
       thumbnailHtml = `
-        <video class="civitai-search-thumbnail" src="${thumbnailUrl}" autoplay loop muted playsinline
+        <video class="huggingface-search-thumbnail" src="${thumbnailUrl}" autoplay loop muted playsinline
                title="${videoTitle}"
                onerror="console.error('Failed to load video preview:', this.src)">
           Your browser does not support the video tag.
@@ -134,43 +134,43 @@ export function renderSearchResults(ui, items) {
     } else {
       const effective = thumbnailUrl || placeholder;
       thumbnailHtml = `
-        <img src="${effective}" alt="${imageAlt}" class="civitai-search-thumbnail" loading="lazy" onerror="${onErrorScript}">
+        <img src="${effective}" alt="${imageAlt}" class="huggingface-search-thumbnail" loading="lazy" onerror="${onErrorScript}">
       `;
     }
 
-    const overlayHtml = shouldBlur ? `<div class="civitai-nsfw-overlay" title="R-rated: click to reveal">R</div>` : '';
-    const containerClasses = `civitai-thumbnail-container${shouldBlur ? ' blurred' : ''}`;
+    const overlayHtml = shouldBlur ? `<div class="huggingface-nsfw-overlay" title="R-rated: click to reveal">R</div>` : '';
+    const containerClasses = `huggingface-thumbnail-container${shouldBlur ? ' blurred' : ''}`;
 
     listItem.innerHTML = `
       <div class="${containerClasses}" data-nsfw-level="${nsfwLevel ?? ''}">
         ${thumbnailHtml}
         ${overlayHtml}
-        <div class="civitai-type-badge" data-type="${modelTypeApi.toLowerCase()}">${modelTypeApi}</div>
+        <div class="huggingface-type-badge" data-type="${modelTypeApi.toLowerCase()}">${modelTypeApi}</div>
       </div>
-      <div class="civitai-search-info">
+      <div class="huggingface-search-info">
         <h4>${modelName}</h4>
-        <div class="civitai-search-meta-info">
+        <div class="huggingface-search-meta-info">
           <span title="Creator: ${creator}"><i class="fas fa-user"></i> ${creator}</span>
           <span title="Base Models: ${baseModelsDisplay}"><i class="fas fa-layer-group"></i> ${baseModelsDisplay}</span>
           <span title="Published: ${lastUpdatedFormatted}"><i class="fas fa-calendar-alt"></i> ${lastUpdatedFormatted}</span>
         </div>
-        <div class="civitai-search-stats" title="Stats: Downloads / Rating (Count) / Likes">
+        <div class="huggingface-search-stats" title="Stats: Downloads / Rating (Count) / Likes">
           <span title="Downloads"><i class="fas fa-download"></i> ${stats.downloadCount?.toLocaleString() || 0}</span>
           <span title="Thumbs"><i class="fas fa-thumbs-up"></i> ${stats.thumbsUpCount?.toLocaleString() || 0}</span>
           <span title="Collected"><i class="fas fa-archive"></i> ${stats.collectedCount?.toLocaleString() || 0}</span>
           <span title="Buzz"><i class="fas fa-bolt"></i> ${stats.tippedAmountCount?.toLocaleString() || 0}</span>
         </div>
         ${tags.length > 0 ? `
-        <div class="civitai-search-tags" title="${tags.join(', ')}">
-          ${tags.slice(0, 5).map(tag => `<span class="civitai-search-tag">${tag}</span>`).join('')}
-          ${tags.length > 5 ? `<span class="civitai-search-tag">...</span>` : ''}
+        <div class="huggingface-search-tags" title="${tags.join(', ')}">
+          ${tags.slice(0, 5).map(tag => `<span class="huggingface-search-tag">${tag}</span>`).join('')}
+          ${tags.length > 5 ? `<span class="huggingface-search-tag">...</span>` : ''}
         </div>
         ` : ''}
       </div>
-      <div class="civitai-search-actions">
-        <a href="https://civitai.com/models/${modelId}${primaryVersionId ? '?modelVersionId='+primaryVersionId : ''}" 
-           target="_blank" rel="noopener noreferrer" class="civitai-button small" 
-           title="Open on Civitai website">
+      <div class="huggingface-search-actions">
+        <a href="https://huggingface.com/models/${modelId}${primaryVersionId ? '?modelVersionId='+primaryVersionId : ''}" 
+           target="_blank" rel="noopener noreferrer" class="huggingface-button small" 
+           title="Open on HuggingFace website">
           View <i class="fas fa-external-link-alt"></i>
         </a>
         <div class="version-buttons-container">

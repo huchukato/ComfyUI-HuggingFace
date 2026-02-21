@@ -47,7 +47,7 @@ MODEL_TYPE_DIRS = {
     "motionmodule": ("Motion Module", "motion_models"),
     "poses": ("Poses", "poses"),
     "wildcards": ("Wildcards", "wildcards"),
-    # 'other' will save to a dedicated folder inside the Civicomfy extension directory
+    # 'other' will save to a dedicated folder inside the HuggingFace extension directory
     "other": ("Other", None)
 }
 
@@ -87,7 +87,7 @@ PREVIEW_SUFFIX = ".preview.jpeg" # Keep as requested, even if source is png/webp
 
 # --- Log Initial Paths for Verification ---
 print("-" * 30)
-print("[Civicomfy Config Initialized]")
+print("[HuggingFace Config Initialized]")
 print(f"  - Plugin Root: {PLUGIN_ROOT}")
 print(f"  - Web Directory: {WEB_DIRECTORY}")
 print(f"  - ComfyUI Base Path: {COMFYUI_ROOT_DIR}")

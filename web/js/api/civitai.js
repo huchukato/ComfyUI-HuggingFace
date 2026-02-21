@@ -1,9 +1,9 @@
-// API client for Civicomfy UI
+// API client for HuggingFace UI
 // Wraps ComfyUI's fetchApi with consistent error handling
 
 import { api } from "../../../../scripts/api.js";
 
-export class CivitaiDownloaderAPI {
+export class HuggingFaceDownloaderAPI {
   static async _request(endpoint, options = {}) {
     try {
       const url = endpoint.startsWith("/") ? endpoint : `/${endpoint}`;
@@ -42,7 +42,7 @@ export class CivitaiDownloaderAPI {
   }
 
   static async downloadModel(params) {
-    return await this._request("/civitai/download", {
+    return await this._request("/huggingface/download", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(params),
@@ -50,7 +50,7 @@ export class CivitaiDownloaderAPI {
   }
 
   static async getModelDetails(params) {
-    return await this._request("/civitai/get_model_details", {
+    return await this._request("/huggingface/get_model_details", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(params),
@@ -58,11 +58,11 @@ export class CivitaiDownloaderAPI {
   }
 
   static async getStatus() {
-    return await this._request("/civitai/status");
+    return await this._request("/huggingface/status");
   }
 
   static async cancelDownload(downloadId) {
-    return await this._request("/civitai/cancel", {
+    return await this._request("/huggingface/cancel", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ download_id: downloadId }),
@@ -70,7 +70,7 @@ export class CivitaiDownloaderAPI {
   }
 
   static async searchModels(params) {
-    return await this._request("/civitai/search", {
+    return await this._request("/huggingface/search", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(params),
@@ -78,20 +78,20 @@ export class CivitaiDownloaderAPI {
   }
 
   static async getBaseModels() {
-    return await this._request("/civitai/base_models");
+    return await this._request("/huggingface/base_models");
   }
 
   static async getModelTypes() {
-    return await this._request("/civitai/model_types");
+    return await this._request("/huggingface/model_types");
   }
 
   static async getModelDirs(modelType) {
     const q = encodeURIComponent(modelType || 'checkpoints');
-    return await this._request(`/civitai/model_dirs?type=${q}`);
+    return await this._request(`/huggingface/model_dirs?type=${q}`);
   }
 
   static async createModelDir(modelType, newDir, root = "") {
-    return await this._request("/civitai/create_dir", {
+    return await this._request("/huggingface/create_dir", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ model_type: modelType, new_dir: newDir, root }),
@@ -99,7 +99,7 @@ export class CivitaiDownloaderAPI {
   }
 
   static async createModelType(name) {
-    return await this._request("/civitai/create_model_type", {
+    return await this._request("/huggingface/create_model_type", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ name }),
@@ -108,11 +108,11 @@ export class CivitaiDownloaderAPI {
 
   static async getModelRoots(modelType) {
     const q = encodeURIComponent(modelType || 'checkpoints');
-    return await this._request(`/civitai/model_roots?type=${q}`);
+    return await this._request(`/huggingface/model_roots?type=${q}`);
   }
 
   static async createModelRoot(modelType, absPath) {
-    return await this._request("/civitai/create_root", {
+    return await this._request("/huggingface/create_root", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ model_type: modelType, path: absPath }),
@@ -120,11 +120,11 @@ export class CivitaiDownloaderAPI {
   }
 
   static async getGlobalRoot() {
-    return await this._request("/civitai/global_root");
+    return await this._request("/huggingface/global_root");
   }
 
   static async setGlobalRoot(path) {
-    return await this._request("/civitai/global_root", {
+    return await this._request("/huggingface/global_root", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ path }),
@@ -132,7 +132,7 @@ export class CivitaiDownloaderAPI {
   }
 
   static async clearGlobalRoot() {
-    return await this._request("/civitai/global_root/clear", {
+    return await this._request("/huggingface/global_root/clear", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({}),
@@ -140,7 +140,7 @@ export class CivitaiDownloaderAPI {
   }
 
   static async retryDownload(downloadId) {
-    return await this._request("/civitai/retry", {
+    return await this._request("/huggingface/retry", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ download_id: downloadId }),
@@ -148,7 +148,7 @@ export class CivitaiDownloaderAPI {
   }
 
   static async openPath(downloadId) {
-    return await this._request("/civitai/open_path", {
+    return await this._request("/huggingface/open_path", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ download_id: downloadId }),
@@ -156,7 +156,7 @@ export class CivitaiDownloaderAPI {
   }
 
   static async clearHistory() {
-    return await this._request("/civitai/clear_history", {
+    return await this._request("/huggingface/clear_history", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
     });

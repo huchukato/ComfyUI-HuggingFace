@@ -1,6 +1,6 @@
 // Renders the download preview panel
 
-const PLACEHOLDER_IMAGE_URL = `/extensions/Civicomfy/images/placeholder.jpeg`;
+const PLACEHOLDER_IMAGE_URL = `/extensions/HuggingFace/images/placeholder.jpeg`;
 
 export function renderDownloadPreview(ui, data) {
   if (!ui.downloadPreviewArea) return;
@@ -21,24 +21,24 @@ export function renderDownloadPreview(ui, data) {
   const nsfwLevel = Number(data.nsfw_level ?? 0);
   const blurMinLevel = Number(ui.settings?.nsfwBlurMinLevel ?? 4);
   const shouldBlur = ui.settings?.hideMatureInSearch === true && nsfwLevel >= blurMinLevel;
-  const civitaiLink = `https://civitai.com/models/${modelId}${data.version_id ? '?modelVersionId=' + data.version_id : ''}`;
+  const huggingfaceLink = `https://huggingface.com/models/${modelId}${data.version_id ? '?modelVersionId=' + data.version_id : ''}`;
 
   const onErrorScript = `this.onerror=null; this.src='${PLACEHOLDER_IMAGE_URL}'; this.style.backgroundColor='#444';`;
 
-  const overlayHtml = shouldBlur ? `<div class="civitai-nsfw-overlay" title="R-rated: click to reveal">R</div>` : '';
-  const containerClasses = `civitai-thumbnail-container${shouldBlur ? ' blurred' : ''}`;
+  const overlayHtml = shouldBlur ? `<div class="huggingface-nsfw-overlay" title="R-rated: click to reveal">R</div>` : '';
+  const containerClasses = `huggingface-thumbnail-container${shouldBlur ? ' blurred' : ''}`;
 
   const previewHtml = `
-    <div class="civitai-search-item" style="background-color: var(--comfy-input-bg);">
+    <div class="huggingface-search-item" style="background-color: var(--comfy-input-bg);">
       <div class="${containerClasses}" data-nsfw-level="${Number.isFinite(nsfwLevel) ? nsfwLevel : ''}">
-        <img src="${thumbnail}" alt="${modelName} thumbnail" class="civitai-search-thumbnail" loading="lazy" onerror="${onErrorScript}">
+        <img src="${thumbnail}" alt="${modelName} thumbnail" class="huggingface-search-thumbnail" loading="lazy" onerror="${onErrorScript}">
         ${overlayHtml}
-        <div class="civitai-type-badge">${modelType}</div>
+        <div class="huggingface-type-badge">${modelType}</div>
       </div>
-      <div class="civitai-search-info">
+      <div class="huggingface-search-info">
         <h4>${modelName} <span style="font-weight: normal; font-size: 0.9em;">by ${creator}</span></h4>
         <p style="font-weight: bold;">Version: ${versionName} <span class="base-model-badge" style="margin-left: 5px;">${baseModel}</span></p>
-        <div class="civitai-search-stats" title="Stats: Downloads / Rating (Count) / Likes">
+        <div class="huggingface-search-stats" title="Stats: Downloads / Rating (Count) / Likes">
           <span title="Downloads"><i class="fas fa-download"></i> ${stats.downloads?.toLocaleString() || 0}</span>
           <span title="Likes"><i class="fas fa-thumbs-up"></i> ${stats.likes?.toLocaleString(0) || 0}</span>
           <span title="Dislikes"><i class="fas fa-thumbs-down"></i> ${stats.dislikes?.toLocaleString() || 0}</span>
@@ -53,9 +53,9 @@ export function renderDownloadPreview(ui, data) {
           Model Size: ${fileInfo.model_size || 'N/A'}
         </p>
         ${files.length > 0 ? `
-          <div class=\"civitai-form-group\" style=\"margin-top: 10px;\">
-            <label for=\"civitai-file-select\">Choose File (optional)</label>
-            <select id=\"civitai-file-select\" class=\"civitai-select\">
+          <div class=\"huggingface-form-group\" style=\"margin-top: 10px;\">
+            <label for=\"huggingface-file-select\">Choose File (optional)</label>
+            <select id=\"huggingface-file-select\" class=\"huggingface-select\">
               <option value=\"\">Auto (primary/best)</option>
               ${files.map(f => {
                 const id = f.id ?? '';
@@ -73,8 +73,8 @@ export function renderDownloadPreview(ui, data) {
             <p style=\"font-size: 0.9em; color: #aaa; margin-top: 6px;\">Pick other variants when available.</p>
           </div>
         ` : ''}
-        <a href="${civitaiLink}" target="_blank" rel="noopener noreferrer" class="civitai-button small" title="Open on Civitai website" style="margin-top: 5px; display: inline-block;">
-          View on Civitai <i class="fas fa-external-link-alt"></i>
+        <a href="${huggingfaceLink}" target="_blank" rel="noopener noreferrer" class="huggingface-button small" title="Open on HuggingFace website" style="margin-top: 5px; display: inline-block;">
+          View on HuggingFace <i class="fas fa-external-link-alt"></i>
         </a>
       </div>
     </div>

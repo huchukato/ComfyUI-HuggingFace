@@ -23,7 +23,7 @@ try:
     from folder_paths import get_directory_by_type, get_valid_path, base_path
     COMFY_PATHS_AVAILABLE = True
 except ImportError:
-    print("[Civicomfy Manager] Warning: ComfyUI folder_paths not available. Path validation/opening might be limited.")
+    print("[HuggingFace Manager] Warning: ComfyUI folder_paths not available. Path validation/opening might be limited.")
     COMFY_PATHS_AVAILABLE = False
     base_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", ".."))
 
