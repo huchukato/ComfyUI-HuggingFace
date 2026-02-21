@@ -72,7 +72,7 @@ if imports_successful:
     NODE_DISPLAY_NAME_MAPPINGS = {}
 
     # Define the web directory for ComfyUI to serve
-    # The key is the path component in the URL: /extensions/HuggingFace/...
+    # The key is the path component in the URL: /extensions/ComfyUI-HuggingFace/...
     # The value is the directory path relative to this __init__.py file
     WEB_DIRECTORY = "./web" # This tells ComfyUI to serve the ./web folder relative to this file
     
