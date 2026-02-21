@@ -36,9 +36,21 @@ async def route_search_models(request):
             
             # Prepare search parameters
             search_params = {
-                "limit": limit,
-                "sort": sort.lower().replace(" ", "_")  # Convert "Most Downloaded" to "most_downloaded"
+                "limit": limit
             }
+            
+            # Map sort values to valid huggingface_hub values
+            sort_mapping = {
+                "Most Downloaded": "downloads",
+                "Most Liked": "likes", 
+                "Newest": "created_at",
+                "Relevancy": None,  # Remove sort for relevancy (default)
+                "Alphabetical": "modelId"
+            }
+            
+            sort_value = sort_mapping.get(sort, None)
+            if sort_value:
+                search_params["sort"] = sort_value
             
             if query:
                 search_params["search"] = query
