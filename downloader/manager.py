@@ -74,7 +74,7 @@ class DownloadManager:
                 'url', 'output_path', 'num_connections', 'api_key', 'known_size',
                 'huggingface_model_info', 'huggingface_version_info', 'huggingface_primary_file',
                 'thumbnail', 'filename', 'model_url_or_id', 'model_version_id', 'model_type',
-                'custom_filename', 'force_redownload' # Add force_redownload too
+                'custom_filename', 'force_redownload', 'huggingface_model_name'  # Add huggingface_model_name!
             ]
             for key in required_for_retry:
                 if key not in download_info:
