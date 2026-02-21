@@ -1,3 +1,25 @@
+/* HuggingFace Button Styling - Distinct from Civicomfy */
+#huggingface-downloader-button {
+    background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%) !important;
+    color: #000 !important;
+    border: 2px solid #FF8C00 !important;
+    font-weight: bold !important;
+    padding: 4px 12px !important;
+    border-radius: 6px !important;
+    transition: all 0.3s ease !important;
+}
+
+#huggingface-downloader-button:hover {
+    background: linear-gradient(135deg, #FFA500 0%, #FF8C00 100%) !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 8px rgba(255, 140, 0, 0.3) !important;
+}
+
+#huggingface-downloader-button:active {
+    transform: translateY(0) !important;
+    box-shadow: 0 2px 4px rgba(255, 140, 0, 0.3) !important;
+}
+
 .huggingface-downloader-modal {
     position: fixed;
     z-index: 1001; /* Above ComfyUI elements */
