@@ -609,21 +609,20 @@ class DownloadManager:
             # Handle case where url is None (repo downloads)
             url = download_info["url"]
             if url is None:
-                print(f"[Downloader Wrapper {download_id}] URL is None, using huggingface_hub for repo download")
-                # For repo downloads, we need to use huggingface_hub directly
-                from ...api.huggingface import HuggingFaceAPI, HF_HUB_AVAILABLE
+                print(f"[Downloader Wrapper {download_id}] URL is None, using huggingface_hub snapshot_download")
+                # For repo downloads, just use huggingface_hub snapshot_download directly
+                from huggingface_hub import snapshot_download
                 
-                if not HF_HUB_AVAILABLE:
-                    raise Exception("huggingface_hub not available for repo downloads")
+                model_id = download_info["model_url_or_id"]
+                output_path = download_info["output_path"]
                 
-                api_key = download_info.get("api_key")
-                api = HuggingFaceAPI(api_key)
+                print(f"[Downloader Wrapper {download_id}] Downloading repo {model_id} to {output_path}")
                 
                 # Use huggingface_hub to download the entire repo
-                result = api.download_file(
-                    model_id=download_info["model_url_or_id"],
-                    filename=None,  # Download entire repo
-                    local_dir=os.path.dirname(download_info["output_path"])
+                result = snapshot_download(
+                    repo_id=model_id,
+                    local_dir=output_path,
+                    token=download_info.get("api_key")
                 )
                 
                 if result:
@@ -631,7 +630,7 @@ class DownloadManager:
                     final_status = "completed"
                     print(f"[Downloader Wrapper {download_id}] Repo download completed: {result}")
                 else:
-                    raise Exception("huggingface_hub download failed")
+                    raise Exception("snapshot_download failed")
             else:
                 # Normal file download
                 downloader = ChunkDownloader(
