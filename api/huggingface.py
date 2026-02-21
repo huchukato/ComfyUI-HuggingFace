@@ -209,8 +209,7 @@ class HuggingFaceAPI:
                 cmd = [
                     sys.executable, "-m", "huggingface_hub", "download",
                     model_id, filename,
-                    "--local-dir", local_dir,
-                    "--local-dir-use-symlinks", "False"
+                    "--local-dir", local_dir
                 ]
                 if self.api_key:
                     cmd.extend(["--token", self.api_key])
