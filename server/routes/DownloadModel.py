@@ -55,6 +55,7 @@ async def route_download_model(request):
             model_name = target_model_id.split('/')[-1] if target_model_id else "Unknown Model"
             model_info = {"id": target_model_id, "name": model_name}
             print(f"[HF Download] Direct download file: {target_filename}")
+            print(f"[HF Download] Using extracted model name: {model_name}")
         else:
             # Get model info and file list
             api = HuggingFaceAPI(resolved_api_key)
