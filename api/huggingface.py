@@ -162,20 +162,16 @@ class HuggingFaceAPI:
             return {"error": str(e), "status_code": getattr(e.response, 'status_code', None) if hasattr(e, 'response') else None}
 
     def get_model_files(self, model_id: str) -> Optional[Dict[str, Any]]:
-        """Gets files for a specific HuggingFace model. (GET /models/{id}/tree)"""
-        endpoint = f"/models/{model_id}/tree"
-        result = self._request("GET", endpoint)
-        if isinstance(result, dict) and "error" in result:
-            return result
-        return result
+        """Gets files for a specific HuggingFace model. Uses huggingface_hub instead of API."""
+        # Skip API calls, let huggingface_hub handle everything
+        print(f"[HuggingFace API] Skipping file listing, using huggingface_hub auto-detect for {model_id}")
+        return {"auto_detect": True}
 
     def get_model_info(self, model_id: str) -> Optional[Dict[str, Any]]:
-        """Gets information about a model by its ID. (GET /models/{id})"""
-        endpoint = f"/models/{model_id}"
-        result = self._request("GET", endpoint)
-        if isinstance(result, dict) and "error" in result:
-            return result
-        return result
+        """Gets information about a model by its ID. Uses huggingface_hub instead of API."""
+        # Skip API calls, let huggingface_hub handle everything
+        print(f"[HuggingFace API] Skipping model info, using huggingface_hub auto-detect for {model_id}")
+        return {"id": model_id, "name": model_id.split('/')[-1]}
 
     def get_model_version_info(self, version_id: str) -> Optional[Dict[str, Any]]:
         """Gets version information - not applicable for HuggingFace, returns empty dict"""
@@ -184,50 +180,40 @@ class HuggingFaceAPI:
         return {}
 
     def download_file(self, model_id: str, filename: str, local_dir: str = None) -> Optional[Union[requests.Response, str]]:
-        """Downloads a specific file from HuggingFace. Uses huggingface_hub if available."""
-        if HF_HUB_AVAILABLE and local_dir:
-            try:
-                # Use official huggingface_hub library
-                print(f"[HuggingFace API] Using huggingface_hub for download: {model_id}/{filename}")
+        """Downloads a specific file from HuggingFace. Uses only huggingface_hub."""
+        if not HF_HUB_AVAILABLE:
+            print("[HuggingFace API] huggingface_hub not available")
+            return None
+            
+        if not local_dir:
+            print("[HuggingFace API] local_dir not specified")
+            return None
+            
+        try:
+            print(f"[HuggingFace API] Using huggingface_hub for download: {model_id}/{filename}")
+            
+            if filename is None:
+                # Download entire repo using snapshot_download
+                print(f"[HuggingFace API] Downloading entire repo {model_id}")
+                result = snapshot_download(
+                    repo_id=model_id,
+                    local_dir=local_dir,
+                    token=self.api_key
+                )
+                print(f"[HuggingFace API] snapshot_download success: {result}")
+                return result
+            else:
+                # Download specific file using hf_hub_download
                 result = hf_hub_download(
                     repo_id=model_id,
                     filename=filename,
                     local_dir=local_dir,
-                    local_dir_use_symlinks=False,
                     resume_download=True,
                     token=self.api_key
                 )
-                return result  # Returns the local file path
-            except Exception as e:
-                print(f"[HuggingFace API] huggingface_hub download failed: {e}")
-                print("[HuggingFace API] Trying CLI fallback...")
-        
-        # Try CLI fallback
-        if local_dir:
-            try:
-                print(f"[HuggingFace API] Using CLI fallback for download: {model_id}/{filename}")
-                cmd = [
-                    sys.executable, "-m", "huggingface_hub", "download",
-                    model_id, filename,
-                    "--local-dir", local_dir
-                ]
-                if self.api_key:
-                    cmd.extend(["--token", self.api_key])
+                print(f"[HuggingFace API] hf_hub_download success: {result}")
+                return result
                 
-                result = subprocess.run(cmd, capture_output=True, text=True, timeout=300)
-                if result.returncode == 0:
-                    file_path = os.path.join(local_dir, filename)
-                    return file_path
-                else:
-                    print(f"[HuggingFace API] CLI download failed: {result.stderr}")
-                    print("[HuggingFace API] Falling back to manual download")
-            except Exception as e:
-                print(f"[HuggingFace API] CLI fallback failed: {e}")
-                print("[HuggingFace API] Falling back to manual download")
-        
-        # Final fallback to manual download
-        endpoint = f"/models/{model_id}/resolve/main/{filename}"
-        result = self._request("GET", endpoint, stream=True)
-        if isinstance(result, dict) and "error" in result:
-            return result
-        return result
+        except Exception as e:
+            print(f"[HuggingFace API] huggingface_hub download failed: {e}")
+            return None

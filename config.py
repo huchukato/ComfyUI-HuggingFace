@@ -35,6 +35,7 @@ COMFYUI_ROOT_DIR = folder_paths.base_path
 MODEL_TYPE_DIRS = {
     "checkpoint": ("Checkpoint", "checkpoints"),
     "diffusionmodels": ("Diffusion Models", "diffusion_models"),  # Wan 2.2 and similar
+    "diffusers": ("diffusers"), #Diffusers Models
     "unet": ("Unet", "unet"),  # GGUF models
     "lora": ("Lora", "loras"),
     "locon": ("LoCon", "loras"),
