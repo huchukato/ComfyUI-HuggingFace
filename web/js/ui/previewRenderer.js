@@ -1,6 +1,6 @@
 // Renders the download preview panel
 
-const PLACEHOLDER_IMAGE_URL = `/extensions/HuggingFace/images/placeholder.jpg`;
+const PLACEHOLDER_IMAGE_URL = `/custom_nodes/ComfyUI-HuggingFace/web/images/placeholder.jpg`;
 
 export function renderDownloadPreview(ui, data) {
   if (!ui.downloadPreviewArea) return;
