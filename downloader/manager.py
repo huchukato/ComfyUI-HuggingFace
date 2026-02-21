@@ -927,3 +927,6 @@ def shutdown_manager():
 
 import atexit
 atexit.register(shutdown_manager)
+
+# Create the global manager instance
+manager = DownloadManager()
