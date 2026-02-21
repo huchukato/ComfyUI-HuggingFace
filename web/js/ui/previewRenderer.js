@@ -1,6 +1,6 @@
 // Renders the download preview panel
 
-const PLACEHOLDER_IMAGE_URL = `images/placeholder.jpg`;
+const PLACEHOLDER_IMAGE_URL = `/extensions/HuggingFace.HuggingFaceDownloader//extensions/HuggingFace.HuggingFaceDownloader/images/placeholder.jpg`;
 
 export function renderDownloadPreview(ui, data) {
   if (!ui.downloadPreviewArea) return;
