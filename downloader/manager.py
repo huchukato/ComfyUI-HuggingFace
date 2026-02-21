@@ -605,15 +605,44 @@ class DownloadManager:
 
         try:
             print(f"[Downloader Wrapper {download_id}] Preparing download for '{filename}'.")
-            downloader = ChunkDownloader(
-                url=download_info["url"],
-                output_path=download_info["output_path"],
-                num_connections=download_info.get("num_connections", DEFAULT_CONNECTIONS),
-                manager=self,
-                download_id=download_id,
-                api_key=download_info.get("api_key"),
-                known_size=download_info.get("known_size")
-            )
+            
+            # Handle case where url is None (repo downloads)
+            url = download_info["url"]
+            if url is None:
+                print(f"[Downloader Wrapper {download_id}] URL is None, using huggingface_hub for repo download")
+                # For repo downloads, we need to use huggingface_hub directly
+                from ...api.huggingface import HuggingFaceAPI, HF_HUB_AVAILABLE
+                
+                if not HF_HUB_AVAILABLE:
+                    raise Exception("huggingface_hub not available for repo downloads")
+                
+                api_key = download_info.get("api_key")
+                api = HuggingFaceAPI(api_key)
+                
+                # Use huggingface_hub to download the entire repo
+                result = api.download_file(
+                    model_id=download_info["model_url_or_id"],
+                    filename=None,  # Download entire repo
+                    local_dir=os.path.dirname(download_info["output_path"])
+                )
+                
+                if result:
+                    success = True
+                    final_status = "completed"
+                    print(f"[Downloader Wrapper {download_id}] Repo download completed: {result}")
+                else:
+                    raise Exception("huggingface_hub download failed")
+            else:
+                # Normal file download
+                downloader = ChunkDownloader(
+                    url=url,
+                    output_path=download_info["output_path"],
+                    num_connections=download_info.get("num_connections", DEFAULT_CONNECTIONS),
+                    manager=self,
+                    download_id=download_id,
+                    api_key=download_info.get("api_key"),
+                    known_size=download_info.get("known_size")
+                )
 
             with self.lock:
                   if download_id not in self.active_downloads or self.active_downloads[download_id]["status"] == "cancelled":
