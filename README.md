@@ -2,6 +2,8 @@
 
 ComfyUI-HuggingFace seamlessly integrates HuggingFace's vast model repository directly into ComfyUI, allowing you to search, download, and organize AI models without leaving your workflow.
 
+<img width="1016" height="833" alt="comfyhf" src="https://github.com/user-attachments/assets/3867b704-1b14-4c02-87d4-fc2a61deeb42" />
+
 ## Features
 
 - **Integrated Model Search**: Search HuggingFace's extensive library directly from ComfyUI
@@ -18,11 +20,6 @@ ComfyUI-HuggingFace seamlessly integrates HuggingFace's vast model repository di
 cd ComfyUI/custom_nodes
 git clone https://github.com/huchukato/ComfyUI-HuggingFace.git
 ```
-
-### ComfyUI Manager
-1. Open ComfyUI Manager
-2. Search for "ComfyUI-HuggingFace"
-3. Click Install
 
 ## Usage
 
