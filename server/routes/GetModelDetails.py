@@ -25,7 +25,7 @@ async def route_get_model_details(request):
         if not model_url_or_id:
             raise web.HTTPBadRequest(reason="Missing 'model_url_or_id'")
 
-        # API key priority: request payload > CIVITAI_API_KEY env var
+        # API key priority: request payload > HUGGINGFACE_API_KEY env var
         api = HuggingFaceAPI(resolved_api_key)
 
         # Use the helper to get details

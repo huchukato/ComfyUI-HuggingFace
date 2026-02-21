@@ -8,7 +8,7 @@ from aiohttp import web
 
 # Import necessary components from our modules
 from ..api.huggingface import HuggingFaceAPI
-from ..utils.helpers import parse_huggingface_input, select_primary_file
+from ..utils.helpers import parse_huggingface_input
 
 async def get_request_json(request):
     """Safely get JSON data from request."""
@@ -22,7 +22,7 @@ def resolve_huggingface_api_key(payload: Optional[Dict[str, Any]] = None) -> Opt
     """
     Resolve API key priority:
     1) Explicit key from request payload (`api_key`)
-    2) `CIVITAI_API_KEY` environment variable
+    2) `HUGGINGFACE_API_KEY` environment variable
     """
     request_key = ""
     if isinstance(payload, dict):
@@ -33,7 +33,7 @@ def resolve_huggingface_api_key(payload: Optional[Dict[str, Any]] = None) -> Opt
     if request_key:
         return request_key
 
-    env_key = os.getenv("CIVITAI_API_KEY", "").strip()
+    env_key = os.getenv("HUGGINGFACE_API_KEY", "").strip()
     if env_key:
         return env_key
 
@@ -158,8 +158,19 @@ async def get_huggingface_model_and_version_details(api: HuggingFaceAPI, model_u
     if not files:
         raise web.HTTPNotFound(reason=f"Version {target_version_id} (Name: {version_info_to_use.get('name', 'N/A')}) has no files listed.")
 
-    # Use the centralized helper to select the best file
-    primary_file = select_primary_file(files)
+    # For HuggingFace, just pick the first file or largest .safetensors
+    primary_file = None
+    if files and isinstance(files, list):
+        # Try to find .safetensors first
+        for file_info in files:
+            if (file_info.get("type") == "file" and 
+                file_info.get("path", "").endswith(".safetensors")):
+                primary_file = file_info
+                break
+        
+        # If no .safetensors, pick the largest file
+        if not primary_file:
+            primary_file = max(files, key=lambda x: x.get("size", 0), default=None)
 
     if not primary_file:
         raise web.HTTPNotFound(reason=f"Could not find any usable file with a download URL for version {target_version_id}.")
