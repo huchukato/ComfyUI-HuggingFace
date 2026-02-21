@@ -57,45 +57,28 @@ async def route_download_model(request):
             print(f"[HF Download] Direct download file: {target_filename}")
             print(f"[HF Download] Using extracted model name: {model_name}")
         else:
-            # Get model info and file list
-            api = HuggingFaceAPI(resolved_api_key)
-            model_info = api.get_model_info(target_model_id)
-            
-            if not model_info or "error" in model_info:
-                print(f"[HF Download] Model info failed, trying direct download")
-                # Fallback: try direct download without file listing
-                target_filename = parsed_filename if parsed_filename else "model.safetensors"  # Use parsed or default
-                # Try to get model name from the model_id itself
-                model_name = target_model_id.split('/')[-1] if target_model_id else "Unknown Model"
-                model_info = {"id": target_model_id, "name": model_name}
-                print(f"[HF Download] Using fallback model name: {model_name}")
-            else:
-                # Get file list
-                files_info = api.get_model_files(target_model_id)
-                if not files_info or "error" in files_info:
-                    print(f"[HF Download] File list failed, trying direct download")
-                    # Fallback: try direct download without file listing
-                    target_filename = parsed_filename if parsed_filename else "model.safetensors"  # Use parsed or default
-                    model_info = {"id": target_model_id, "name": target_model_id}
+            # Skip API calls for public repos, use only huggingface_hub
+            if resolved_api_key:
+                # For private repos, try API calls to get model info
+                api = HuggingFaceAPI(resolved_api_key)
+                model_info = api.get_model_info(target_model_id)
+                
+                if not model_info or "error" in model_info:
+                    print(f"[HF Download] Model info failed, using huggingface_hub directly")
+                    target_filename = parsed_filename if parsed_filename else None
+                    model_info = {"id": target_model_id, "name": target_model_id.split('/')[-1]}
                 else:
-                    # Find the best file to download
-                    target_filename = None
-                    if isinstance(files_info, list):
-                        # First try .safetensors files
-                        for file_info in files_info:
-                            if (file_info.get("type") == "file" and 
-                                file_info.get("path", "").endswith(".safetensors")):
-                                target_filename = file_info["path"]
-                                break
-                    
-                    # If no .safetensors found, pick the largest file
-                    if not target_filename:
-                        largest_file = max(files_info, key=lambda x: x.get("size", 0), default=None)
-                        if largest_file and largest_file.get("type") == "file":
-                            target_filename = largest_file["path"]
+                    # For private repos, still use huggingface_hub for download
+                    target_filename = parsed_filename if parsed_filename else None
+            else:
+                # For public repos, skip API calls entirely
+                print(f"[HF Download] Public repo, using huggingface_hub directly")
+                target_filename = parsed_filename if parsed_filename else None
+                model_info = {"id": target_model_id, "name": target_model_id.split('/')[-1]}
         
         if not target_filename:
-            raise web.HTTPBadRequest(reason="No suitable file found for download")
+            print(f"[HF Download] No specific file found, letting huggingface_hub auto-detect")
+            target_filename = None
         
         print(f"[HF Download] Target file: {target_filename}")
 
