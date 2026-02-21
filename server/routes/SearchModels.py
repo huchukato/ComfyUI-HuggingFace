@@ -24,7 +24,7 @@ async def route_search_models(request):
         limit = int(data.get("limit", 20))
         page = int(data.get("page", 1))
         resolved_api_key = resolve_huggingface_api_key(data)
-        nsfw = data.get("nsfw", None)
+        nsfw = data.get("nsfw", True)  # Default to True (enabled)
 
         if not query and not model_type_keys and not base_model_filters:
              raise web.HTTPBadRequest(reason="Search requires a query or at least one filter (type or base model).")
