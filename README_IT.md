@@ -4,7 +4,7 @@
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![ComfyUI](https://img.shields.io/badge/ComfyUI-Compatible-orange.svg)](https://github.com/comfyanonymous/ComfyUI)
 [![HuggingFace](https://img.shields.io/badge/HuggingFace-Integrated-yellow.svg)](https://huggingface.co)
-[![Italian](https://img.shields.io/badge/Language-🇮🇹-Italian-red.svg)](README.md)
+[![English](https://img.shields.io/badge/English-��-blue.svg)](README.md)
 
 ComfyUI-HuggingFace integra perfettamente l'enorme repository di modelli HuggingFace direttamente in ComfyUI, permettendoti di cercare, scaricare e organizzare modelli AI senza lasciare il tuo workflow.
 
