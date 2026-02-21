@@ -1,7 +1,7 @@
 // Rendering of search results list
 // Usage: renderSearchResults(uiInstance, itemsArray)
 
-const PLACEHOLDER_IMAGE_URL = `web/images/placeholder.jpg`;
+const PLACEHOLDER_IMAGE_URL = `custom_nodes/ComfyUI-HuggingFace/web/images/placeholder.jpg`;
 
 export function renderSearchResults(ui, items) {
   ui.feedback?.ensureFontAwesome();
