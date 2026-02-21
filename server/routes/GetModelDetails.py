@@ -7,7 +7,8 @@ import traceback
 from aiohttp import web
 
 import server # ComfyUI server instance
-from ..utils import get_request_json, resolve_huggingface_api_key
+from ..utils import get_request_json
+from .utils import resolve_huggingface_api_key
 from ...api.huggingface import HuggingFaceAPI
 
 prompt_server = server.PromptServer.instance
