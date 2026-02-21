@@ -68,6 +68,7 @@ async def route_download_model(request):
                 # Try to get model name from the model_id itself
                 model_name = target_model_id.split('/')[-1] if target_model_id else "Unknown Model"
                 model_info = {"id": target_model_id, "name": model_name}
+                print(f"[HF Download] Using fallback model name: {model_name}")
             else:
                 # Get file list
                 files_info = api.get_model_files(target_model_id)
