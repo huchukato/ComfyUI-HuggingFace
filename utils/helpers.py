@@ -152,6 +152,9 @@ def parse_huggingface_input(url_or_id: str) -> tuple[str | None, str | None]:
                 # URL format: /FX-FeiHou/wan2.2-Remix/resolve/main/NSFW/file.safetensors
                 model_id = "/".join(path_parts[1:3])  # FX-FeiHou/wan2.2-Remix
                 filename = "/".join(path_parts[4:])  # main/NSFW/file.safetensors
+                # Remove "main/" from filename if it's duplicated
+                if filename.startswith("main/"):
+                    filename = filename[5:]  # Remove "main/" prefix
                 print(f"[DEBUG] Extracted model_id: {model_id}")
                 print(f"[DEBUG] Extracted filename: {filename}")
                 print(f"Parsed HF download URL - Model: {model_id}, File: {filename}")
