@@ -13,7 +13,7 @@ from ...config import PLACEHOLDER_IMAGE_PATH
 
 prompt_server = server.PromptServer.instance
 
-@prompt_server.routes.post("/huggingface/get_model_details")
+@prompt_server.routes.post("/api/huggingface/get_model_details")
 async def route_get_model_details(request):
     """API Endpoint to fetch model/version details for preview."""
     try:
