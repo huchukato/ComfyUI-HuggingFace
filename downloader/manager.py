@@ -44,7 +44,7 @@ class DownloadManager:
         self.running: bool = True
         self._load_history_from_file()
         self._process_thread: threading.Thread = threading.Thread(target=self._process_queue, daemon=True)
-        print(f"Civitai Download Manager starting (Max Concurrent: {self.max_concurrent}).")
+        print(f"HuggingFace Download Manager starting (Max Concurrent: {self.max_concurrent}).")
         self._process_thread.start()
 
     # --- add_to_queue remains largely the same, ensuring all necessary fields are initialized ---
@@ -72,7 +72,7 @@ class DownloadManager:
             # (Most were likely already filled by the calling route, but double-check)
             required_for_retry = [
                 'url', 'output_path', 'num_connections', 'api_key', 'known_size',
-                'civitai_model_info', 'civitai_version_info', 'civitai_primary_file',
+                'huggingface_model_info', 'huggingface_version_info', 'huggingface_primary_file',
                 'thumbnail', 'filename', 'model_url_or_id', 'model_version_id', 'model_type',
                 'custom_filename', 'force_redownload' # Add force_redownload too
             ]
@@ -80,7 +80,7 @@ class DownloadManager:
                 if key not in download_info:
                     # Add default or None if missing. More robust handling might be needed
                     # depending on how routes.py prepares the dict.
-                    if key in ['civitai_model_info', 'civitai_version_info', 'civitai_primary_file']:
+                    if key in ['huggingface_model_info', 'huggingface_version_info', 'huggingface_primary_file']:
                         download_info[key] = {}
                     elif key == 'num_connections':
                         download_info[key] = DEFAULT_CONNECTIONS
@@ -182,7 +182,7 @@ class DownloadManager:
         with self.lock:
             # Fields to exclude when sending status to UI
             exclude_fields_for_ui = [
-                'downloader_instance', 'civitai_model_info', 'civitai_version_info',
+                'downloader_instance', 'huggingface_model_info', 'huggingface_version_info',
                 'api_key', # Don't send API key to frontend status
                 # Large potentially redundant fields:
                 'url', 'output_path', 'custom_filename', 'model_url_or_id',
@@ -453,14 +453,14 @@ class DownloadManager:
                     item["connection_type"] = connection_type
                     updated = True
 
-    # --- _save_civitai_metadata remains the same ---
-    def _save_civitai_metadata(self, download_info: Dict[str, Any]):
+    # --- _save_huggingface_metadata remains the same ---
+    def _save_huggingface_metadata(self, download_info: Dict[str, Any]):
         """Saves the .cminfo.json file."""
         # ... (no changes needed here) ...
         output_path = download_info.get('output_path')
-        model_info = download_info.get('civitai_model_info', {})
-        version_info = download_info.get('civitai_version_info', {})
-        primary_file = download_info.get('civitai_primary_file', {})
+        model_info = download_info.get('huggingface_model_info', {})
+        version_info = download_info.get('huggingface_version_info', {})
+        primary_file = download_info.get('huggingface_primary_file', {})
         download_id = download_info.get('id', 'unknown')
 
         try:
@@ -542,7 +542,7 @@ class DownloadManager:
         if not thumbnail_url:
              print(f"[Manager Preview {download_id}] Skipping preview download: No thumbnail URL provided.")
             # Optionally try to find one in version_info images again? Might be redundant.
-             version_info = download_info.get('civitai_version_info', {})
+             version_info = download_info.get('huggingface_version_info', {})
              if version_info and isinstance(version_info.get('images'), list) and version_info['images']:
                   sorted_images = sorted([img for img in version_info['images'] if img and img.get("url")], key=lambda x: x.get('index', 0))
                   img_data = next((img for img in sorted_images if img.get("type") == "image" and "/width=" in img.get("url","")), None) # Prefer image type with width param
@@ -631,7 +631,7 @@ class DownloadManager:
                 final_status = "completed"
                 print(f"[Downloader Wrapper {download_id}] Download completed successfully for '{filename}'.")
                 try:
-                    self._save_civitai_metadata(download_info)
+                    self._save_huggingface_metadata(download_info)
                     self._download_and_save_preview(download_info)
                 except Exception as meta_err:
                      print(f"[Downloader Wrapper {download_id}] Error during post-download metadata/preview saving: {meta_err}")
@@ -715,7 +715,7 @@ class DownloadManager:
             # --- Validate required fields for queuing (redundant check, but safe) ---
             required_for_retry = [
                 'url', 'output_path', 'num_connections', 'api_key', 'known_size',
-                'civitai_model_info', 'civitai_version_info', 'civitai_primary_file',
+                'huggingface_model_info', 'huggingface_version_info', 'huggingface_primary_file',
                 'thumbnail', 'filename', 'model_url_or_id', 'model_version_id', 'model_type',
                 'custom_filename', 'force_redownload'
             ]

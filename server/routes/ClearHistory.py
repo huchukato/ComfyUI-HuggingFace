@@ -9,7 +9,7 @@ from ...downloader.manager import manager as download_manager
 
 prompt_server = server.PromptServer.instance
 
-@prompt_server.routes.post("/civitai/clear_history")
+@prompt_server.routes.post("/huggingface/clear_history")
 async def route_clear_history(request):
     """API Endpoint to clear the download history."""
     if not download_manager:
@@ -17,7 +17,7 @@ async def route_clear_history(request):
 
     try:
         # No request body needed for this action
-        print(f"[API Route /civitai/clear_history] Received clear history request.")
+        print(f"[API Route /huggingface/clear_history] Received clear history request.")
 
         # Call manager method in thread
         result = await asyncio.to_thread(download_manager.clear_history)
@@ -27,6 +27,6 @@ async def route_clear_history(request):
 
     except Exception as e:
         import traceback
-        print(f"Error handling /civitai/clear_history request: {e}")
+        print(f"Error handling /huggingface/clear_history request: {e}")
         # traceback.print_exc() # Uncomment for detailed logs
         return web.json_response({"error": "Internal Server Error", "details": f"An unexpected error occurred: {str(e)}"}, status=500)

@@ -8,15 +8,15 @@ import re
 from aiohttp import web
 
 import server # ComfyUI server instance
-from ..utils import get_request_json, resolve_civitai_api_key
+from ..utils import get_request_json, resolve_huggingface_api_key
 from ...downloader.manager import manager as download_manager
-from ...api.civitai import CivitaiAPI
-from ...utils.helpers import get_model_dir, parse_civitai_input, sanitize_filename, select_primary_file
+from ...api.huggingface import HuggingFaceAPI
+from ...utils.helpers import get_model_dir, parse_huggingface_input, sanitize_filename, select_primary_file
 from ...config import METADATA_SUFFIX, PREVIEW_SUFFIX
 
 prompt_server = server.PromptServer.instance
 
-@prompt_server.routes.post("/civitai/download")
+@prompt_server.routes.post("/huggingface/download")
 async def route_download_model(request):
     """API Endpoint to initiate a download."""
     model_info = None # Define here for broader scope
@@ -39,7 +39,7 @@ async def route_download_model(request):
         req_file_name_contains = data.get("file_name_contains", "").strip()
         num_connections = int(data.get("num_connections", 4))
         force_redownload = bool(data.get("force_redownload", False))
-        resolved_api_key = resolve_civitai_api_key(data)
+        resolved_api_key = resolve_huggingface_api_key(data)
 
         if not model_url_or_id:
             raise web.HTTPBadRequest(reason="Missing 'model_url_or_id'")
@@ -47,8 +47,8 @@ async def route_download_model(request):
         # --- Input Parsing and Info Fetching ---
         print(f"[Server Download] Request: {model_url_or_id}, SaveType: {model_type_value}, Version: {req_version_id}")
         # API key priority: request payload > CIVITAI_API_KEY env var
-        api = CivitaiAPI(resolved_api_key)
-        parsed_model_id, parsed_version_id = parse_civitai_input(model_url_or_id)
+        api = HuggingFaceAPI(resolved_api_key)
+        parsed_model_id, parsed_version_id = parse_huggingface_input(model_url_or_id)
 
         # Determine the target version ID (request param > URL param)
         target_version_id = None
@@ -64,7 +64,7 @@ async def route_download_model(request):
 
         target_model_id = parsed_model_id
 
-        # --- Get Model/Version Info from Civitai ---
+        # --- Get Model/Version Info from HuggingFace ---
         # Store results in broader scope vars 'model_info' and 'version_info'
         if target_version_id:
             # Fetch version info directly using GET /model-versions/{id}
@@ -95,7 +95,7 @@ async def route_download_model(request):
                 # Handle API error or not found for version ID
                 err_details = version_info_result.get('details') if isinstance(version_info_result, dict) else "Unknown API error"
                 status_code = version_info_result.get('status_code', 500) if isinstance(version_info_result, dict) else 500
-                raise web.HTTPNotFound(reason=f"Civitai API Error: Version {target_version_id} not found or API error. Details: {err_details}",
+                raise web.HTTPNotFound(reason=f"HuggingFace API Error: Version {target_version_id} not found or API error. Details: {err_details}",
                                        body=json.dumps({"error": f"Version {target_version_id} not found or API error", "details": err_details}))
 
         elif target_model_id:
@@ -134,7 +134,7 @@ async def route_download_model(request):
                 # Handle API error or not found for model ID
                 err_details = model_info_result.get('details') if isinstance(model_info_result, dict) else "Unknown API error"
                 status_code = model_info_result.get('status_code', 500) if isinstance(model_info_result, dict) else 500
-                raise web.HTTPNotFound(reason=f"Civitai API Error: Model {target_model_id} not found or API error. Details: {err_details}",
+                raise web.HTTPNotFound(reason=f"HuggingFace API Error: Model {target_model_id} not found or API error. Details: {err_details}",
                                        body=json.dumps({"error": f"Model {target_model_id} not found or API error", "details": err_details}))
 
         else:
@@ -424,13 +424,13 @@ async def route_download_model(request):
             "file_model_size": ui_file_model_size,
             "file_format": ui_file_format,
             # Metadata for .cminfo.json and preview saving
-            "civitai_model_id": target_model_id,
-            "civitai_version_id": target_version_id,
-            "civitai_file_id": file_id,
+            "huggingface_model_id": target_model_id,
+            "huggingface_version_id": target_version_id,
+            "huggingface_file_id": file_id,
             # ---> Pass the full API response dicts <---
-            "civitai_model_info": model_info,
-            "civitai_version_info": version_info,
-            "civitai_primary_file": primary_file, # Pass the selected file object
+            "huggingface_model_info": model_info,
+            "huggingface_version_info": version_info,
+            "huggingface_primary_file": primary_file, # Pass the selected file object
         }
 
         download_id = download_manager.add_to_queue(download_info)
@@ -467,7 +467,7 @@ async def route_download_model(request):
          return web.json_response({"error": http_err.reason, "details": body_detail or "No details", "status_code": http_err.status}, status=http_err.status)
 
     except Exception as e:
-        print("--- Unhandled Error in /civitai/download ---")
+        print("--- Unhandled Error in /huggingface/download ---")
         traceback.print_exc()
         print("--- End Error ---")
         # Return a generic 500 Internal Server Error for unexpected issues

@@ -7,15 +7,15 @@ import traceback
 from aiohttp import web
 
 import server # ComfyUI server instance
-from ..utils import get_request_json, resolve_civitai_api_key
-from ...api.civitai import CivitaiAPI
+from ..utils import get_request_json, resolve_huggingface_api_key
+from ...api.huggingface import HuggingFaceAPI
 from ...config import CIVITAI_API_TYPE_MAP
 
 prompt_server = server.PromptServer.instance
 
-@prompt_server.routes.post("/civitai/search")
+@prompt_server.routes.post("/huggingface/search")
 async def route_search_models(request):
-    """API Endpoint for searching models using Civitai's Meilisearch."""
+    """API Endpoint for searching models using HuggingFace's Meilisearch."""
     try:
         data = await get_request_json(request)
 
@@ -27,24 +27,24 @@ async def route_search_models(request):
         # period = data.get("period", "AllTime")
         limit = int(data.get("limit", 20))
         page = int(data.get("page", 1))
-        resolved_api_key = resolve_civitai_api_key(data)
+        resolved_api_key = resolve_huggingface_api_key(data)
         nsfw = data.get("nsfw", None) # Expect Boolean or None
 
         if not query and not model_type_keys and not base_model_filters:
              raise web.HTTPBadRequest(reason="Search requires a query or at least one filter (type or base model).")
 
         # API key priority: request payload > CIVITAI_API_KEY env var
-        api = CivitaiAPI(resolved_api_key)
+        api = HuggingFaceAPI(resolved_api_key)
 
         # --- Prepare Filters for Meili API call ---
 
-        # 1. Map internal type keys to Civitai API 'type' names (used in Meili filter)
+        # 1. Map internal type keys to HuggingFace API 'type' names (used in Meili filter)
         # This assumes Meili filters on the uppercase names like "LORA", "Checkpoint"
         api_types_filter = []
         if isinstance(model_type_keys, list) and model_type_keys and "any" not in model_type_keys:
             for key in model_type_keys:
                 # Map key.lower() for robustness - use the existing map from config
-                # CIVITAI_API_TYPE_MAP maps internal key -> Civitai API type name (e.g. 'lora' -> 'LORA')
+                # CIVITAI_API_TYPE_MAP maps internal key -> HuggingFace API type name (e.g. 'lora' -> 'LORA')
                 api_type = CIVITAI_API_TYPE_MAP.get(key.lower())
                 # Ensure we handle cases where the map might return None or duplicate types
                 if api_type and api_type not in api_types_filter:
@@ -74,16 +74,16 @@ async def route_search_models(request):
              nsfw=nsfw
         )
 
-        # Handle API error response from CivitaiAPI helper
+        # Handle API error response from HuggingFaceAPI helper
         if meili_results and isinstance(meili_results, dict) and "error" in meili_results:
              status_code = meili_results.get("status_code", 500) or 500
-             reason = f"Civitai API Meili Search Error: {meili_results.get('details', meili_results.get('error', 'Unknown error'))}"
+             reason = f"HuggingFace API Meili Search Error: {meili_results.get('details', meili_results.get('error', 'Unknown error'))}"
              raise web.HTTPException(reason=reason, status=status_code, body=json.dumps(meili_results))
 
         # --- Process Meili Response for Frontend ---
         if meili_results and isinstance(meili_results, dict) and "hits" in meili_results:
               processed_items = []
-              image_base_url = "https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7QA" # Base URL for images
+              image_base_url = "https://image.huggingface.com/xG1nkqKTMzGDvpLrqFT7QA" # Base URL for images
 
               for hit in meili_results.get("hits", []):
                    if not isinstance(hit, dict): continue # Skip invalid hits
@@ -147,7 +147,7 @@ async def route_search_models(request):
 
     except Exception as e:
         # ... (keep existing generic error handling) ...
-        print("--- Unhandled Error in /civitai/search ---")
+        print("--- Unhandled Error in /huggingface/search ---")
         traceback.print_exc()
         print("--- End Error ---")
         return web.json_response({"error": "Internal Server Error", "details": f"An unexpected search error occurred: {str(e)}", "status_code": 500}, status=500)

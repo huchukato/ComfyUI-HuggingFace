@@ -7,29 +7,29 @@ import traceback
 from aiohttp import web
 
 import server # ComfyUI server instance
-from ..utils import get_request_json, get_civitai_model_and_version_details, resolve_civitai_api_key
-from ...api.civitai import CivitaiAPI
+from ..utils import get_request_json, get_huggingface_model_and_version_details, resolve_huggingface_api_key
+from ...api.huggingface import HuggingFaceAPI
 from ...config import PLACEHOLDER_IMAGE_PATH
 
 prompt_server = server.PromptServer.instance
 
-@prompt_server.routes.post("/civitai/get_model_details")
+@prompt_server.routes.post("/huggingface/get_model_details")
 async def route_get_model_details(request):
     """API Endpoint to fetch model/version details for preview."""
     try:
         data = await get_request_json(request)
         model_url_or_id = data.get("model_url_or_id")
         req_version_id = data.get("model_version_id") # Optional explicit version ID
-        resolved_api_key = resolve_civitai_api_key(data)
+        resolved_api_key = resolve_huggingface_api_key(data)
 
         if not model_url_or_id:
             raise web.HTTPBadRequest(reason="Missing 'model_url_or_id'")
 
         # API key priority: request payload > CIVITAI_API_KEY env var
-        api = CivitaiAPI(resolved_api_key)
+        api = HuggingFaceAPI(resolved_api_key)
 
         # Use the helper to get details
-        details = await get_civitai_model_and_version_details(api, model_url_or_id, req_version_id)
+        details = await get_huggingface_model_and_version_details(api, model_url_or_id, req_version_id)
         model_info = details['model_info']
         version_info = details['version_info']
         primary_file = details['primary_file']
@@ -186,7 +186,7 @@ async def route_get_model_details(request):
 
     except Exception as e:
         # Consistent error handling (copied from route_download_model)
-        print("--- Unhandled Error in /civitai/get_model_details ---")
+        print("--- Unhandled Error in /huggingface/get_model_details ---")
         traceback.print_exc()
         print("--- End Error ---")
         return web.json_response({"success": False, "error": "Internal Server Error", "details": f"An unexpected error occurred: {str(e)}", "status_code": 500}, status=500)

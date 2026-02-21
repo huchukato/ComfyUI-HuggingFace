@@ -51,13 +51,13 @@ MODEL_TYPE_DIRS = {
     "other": ("Other", None)
 }
 
-# Civitai API specific type mapping (for search filters)
-# Maps internal key (lowercase) to Civitai API 'types' parameter value
+# HuggingFace API specific type mapping (for search filters)
+# Maps internal key (lowercase) to HuggingFace API 'types' parameter value
 CIVITAI_API_TYPE_MAP = {
     "checkpoint": "Checkpoint",
     "lora": "LORA",
     "locon": "LoCon",
-    "lycoris": "LORA", # Civitai might group LyCORIS under LORA search type
+    "lycoris": "LORA", # HuggingFace might group LyCORIS under LORA search type
     "vae": "VAE",
     "embedding": "TextualInversion",
     "hypernetwork": "Hypernetwork",
