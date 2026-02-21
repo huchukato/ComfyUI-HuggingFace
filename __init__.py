@@ -8,8 +8,6 @@ import os
 EXTENSION_ROOT = os.path.dirname(os.path.realpath(__file__))
 WEB_PATH = os.path.join(EXTENSION_ROOT, "web")
 JS_PATH = os.path.join(WEB_PATH, "js")
-IMAGES_PATH = os.path.join(WEB_PATH, "images")
-PLACEHOLDER_IMAGE_PATH = os.path.join(IMAGES_PATH, "placeholder.jpg")
 # CSS_PATH definition removed as it was unused and pointed to a non-existent directory.
 JS_FILENAME = "huggingfaceDownloader.js"
 CSS_FILENAME = "huggingfaceDownloader.css"
@@ -75,9 +73,6 @@ if imports_successful:
     # The key is the path component in the URL: /extensions/ComfyUI-HuggingFace/...
     # The value is the directory path relative to this __init__.py file
     WEB_DIRECTORY = "./web" # This tells ComfyUI to serve the ./web folder relative to this file
-    
-    # Make paths available to frontend
-    __all__ = ['WEB_DIRECTORY', 'PLACEHOLDER_IMAGE_PATH']
 
     # --- Startup Messages ---
     print("-" * 30)
