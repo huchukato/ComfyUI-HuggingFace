@@ -8,7 +8,7 @@ import folder_paths
 
 prompt_server = server.PromptServer.instance
 
-@prompt_server.routes.get("/civitai/model_types")
+@prompt_server.routes.get("/huggingface/model_types")
 async def route_get_model_types(request):
     """API Endpoint to get the known model types and their mapping."""
     try:

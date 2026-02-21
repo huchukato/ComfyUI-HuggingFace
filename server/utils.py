@@ -7,8 +7,8 @@ from typing import Any, Dict, Optional
 from aiohttp import web
 
 # Import necessary components from our modules
-from ..api.civitai import CivitaiAPI
-from ..utils.helpers import parse_civitai_input, select_primary_file
+from ..api.huggingface import HuggingFaceAPI
+from ..utils.helpers import parse_huggingface_input, select_primary_file
 
 async def get_request_json(request):
     """Safely get JSON data from request."""
@@ -18,7 +18,7 @@ async def get_request_json(request):
         print(f"Error parsing request JSON: {e}")
         raise web.HTTPBadRequest(reason=f"Invalid JSON format: {e}")
 
-def resolve_civitai_api_key(payload: Optional[Dict[str, Any]] = None) -> Optional[str]:
+def resolve_huggingface_api_key(payload: Optional[Dict[str, Any]] = None) -> Optional[str]:
     """
     Resolve API key priority:
     1) Explicit key from request payload (`api_key`)
@@ -39,9 +39,9 @@ def resolve_civitai_api_key(payload: Optional[Dict[str, Any]] = None) -> Optiona
 
     return None
 
-async def get_civitai_model_and_version_details(api: CivitaiAPI, model_url_or_id: str, req_version_id: Optional[int]) -> Dict[str, Any]:
+async def get_huggingface_model_and_version_details(api: HuggingFaceAPI, model_url_or_id: str, req_version_id: Optional[int]) -> Dict[str, Any]:
     """
-    Helper to fetch Civitai details.
+    Helper to fetch HuggingFace details.
     Prioritizes fetching model info based on resolved Model ID.
     Fetches specific version info if version ID is provided/resolved, otherwise latest.
     Returns a dict with 'model_info', 'version_info', 'primary_file', and resolved IDs.
@@ -55,7 +55,7 @@ async def get_civitai_model_and_version_details(api: CivitaiAPI, model_url_or_id
     primary_file = None
 
     # --- 1. Parse Input to get potential IDs ---
-    parsed_model_id, parsed_version_id = parse_civitai_input(model_url_or_id)
+    parsed_model_id, parsed_version_id = parse_huggingface_input(model_url_or_id)
 
     # Determine the initial target model ID (input URL/ID takes precedence)
     target_model_id = parsed_model_id
@@ -70,7 +70,7 @@ async def get_civitai_model_and_version_details(api: CivitaiAPI, model_url_or_id
         potential_version_id_from_input = parsed_version_id
 
     # --- 2. Ensure we have a Model ID ---
-    # If we only got a version ID from the input (e.g., civitai.com/model-versions/456),
+    # If we only got a version ID from the input (e.g., huggingface.com/model-versions/456),
     # we need to fetch that version *first* just to find the model ID.
     if not target_model_id and potential_version_id_from_input:
         print(f"[API Helper] Input requires fetching version {potential_version_id_from_input} first to find model ID.")

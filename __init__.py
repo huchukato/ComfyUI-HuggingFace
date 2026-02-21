@@ -9,8 +9,8 @@ EXTENSION_ROOT = os.path.dirname(os.path.realpath(__file__))
 WEB_PATH = os.path.join(EXTENSION_ROOT, "web")
 JS_PATH = os.path.join(WEB_PATH, "js")
 # CSS_PATH definition removed as it was unused and pointed to a non-existent directory.
-JS_FILENAME = "civitaiDownloader.js"
-CSS_FILENAME = "civitaiDownloader.css"
+JS_FILENAME = "huggingfaceDownloader.js"
+CSS_FILENAME = "huggingfaceDownloader.css"
 JS_FILE_PATH = os.path.join(JS_PATH, JS_FILENAME)
 CSS_FILE_PATH = os.path.join(JS_PATH, CSS_FILENAME) 
 

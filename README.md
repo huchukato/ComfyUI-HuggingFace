@@ -1,10 +1,10 @@
-# Civicomfy - Civitai Model Downloader for ComfyUI
+# ComfyUI-HuggingFace - HuggingFace Model Downloader for ComfyUI
 
-Civicomfy seamlessly integrates Civitai's vast model repository directly into ComfyUI, allowing you to search, download, and organize AI models without leaving your workflow.
+Civicomfy seamlessly integrates HuggingFace's vast model repository directly into ComfyUI, allowing you to search, download, and organize AI models without leaving your workflow.
 
 ## Features
 
-- **Integrated Model Search**: Search Civitai's extensive library directly from ComfyUI
+- **Integrated Model Search**: Search HuggingFace's extensive library directly from ComfyUI
 - **One-Click Downloads**: Download models with associated metadata and thumbnails
 - **Automatic Organization**: Models are automatically saved to their appropriate directories
 - **Clean UI**: Clean, intuitive interface that complements ComfyUI's aesthetic
@@ -36,7 +36,7 @@ ComfyUI Manager
 
 ## Configuration
 
-- Enter your Civitai API Token in the settings, or set `CIVITAI_API_KEY` in the server environment (useful for cloud deployments like RunPod).
+- Enter your HuggingFace API Token in the settings, or set `CIVITAI_API_KEY` in the server environment (useful for cloud deployments like RunPod).
 - Optional: set a **Global Download Root** in Civicomfy settings.
   - When set, Civicomfy saves to `<global_root>/<model_type>` (for example `/runpod-volume/ComfyUI/checkpoints` or `/runpod-volume/ComfyUI/loras`).
   - When empty, Civicomfy uses the default ComfyUI paths (`folder_paths` / `extra_model_paths.yaml`).

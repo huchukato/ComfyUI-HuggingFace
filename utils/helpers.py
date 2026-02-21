@@ -181,9 +181,9 @@ def get_model_dir(model_type: str) -> str:
 
     return full_path
 
-def parse_civitai_input(url_or_id: str) -> tuple[int | None, int | None]:
+def parse_huggingface_input(url_or_id: str) -> tuple[int | None, int | None]:
     """
-    Parses Civitai URL or ID string.
+    Parses HuggingFace URL or ID string.
     Returns: (model_id, version_id) tuple. Both can be None.
     Handles URLs like /models/123 and /models/123?modelVersionId=456
     """
@@ -218,17 +218,17 @@ def parse_civitai_input(url_or_id: str) -> tuple[int | None, int | None]:
             # Maybe it's a path like /models/123 without the domain?
             if url_or_id.startswith(("/models/", "/model-versions/")):
                  # Re-parse with a dummy scheme and domain
-                 parsed_url = urllib.parse.urlparse("https://civitai.com" + url_or_id)
+                 parsed_url = urllib.parse.urlparse("https://huggingface.com" + url_or_id)
                  if not parsed_url.path: # If still fails, give up
-                      print(f"Input '{url_or_id}' is not a recognizable Civitai path or URL.")
+                      print(f"Input '{url_or_id}' is not a recognizable HuggingFace path or URL.")
                       return None, None
             else:
-                 print(f"Input '{url_or_id}' is not a valid ID or Civitai URL/path.")
+                 print(f"Input '{url_or_id}' is not a valid ID or HuggingFace URL/path.")
                  return None, None
 
         # Check domain if it was present
-        if parsed_url.netloc and "civitai.com" not in parsed_url.netloc.lower():
-            print(f"Input URL '{url_or_id}' is not a Civitai URL.")
+        if parsed_url.netloc and "huggingface.com" not in parsed_url.netloc.lower():
+            print(f"Input URL '{url_or_id}' is not a HuggingFace URL.")
             return None, None
 
         # Extract path components and query parameters
@@ -284,10 +284,10 @@ def parse_civitai_input(url_or_id: str) -> tuple[int | None, int | None]:
          # Keep the initially parsed model_id if input was digits-only
 
     except Exception as e:
-        print(f"Error parsing Civitai input '{url_or_id}': {e}")
+        print(f"Error parsing HuggingFace input '{url_or_id}': {e}")
         return None, None
 
-    print(f"Parsed Civitai input: Model ID = {model_id}, Version ID = {version_id}")
+    print(f"Parsed HuggingFace input: Model ID = {model_id}, Version ID = {version_id}")
     # Return the determined IDs. It's the caller's responsibility to fetch model info if only version ID is present.
     return model_id, version_id
 

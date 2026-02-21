@@ -10,7 +10,7 @@ from ...downloader.manager import manager as download_manager
 
 prompt_server = server.PromptServer.instance
 
-@prompt_server.routes.post("/civitai/retry")
+@prompt_server.routes.post("/huggingface/retry")
 async def route_retry_download(request):
     """API Endpoint to retry a failed/cancelled download."""
     if not download_manager:
@@ -23,7 +23,7 @@ async def route_retry_download(request):
         if not download_id:
             return web.json_response({"error": "Missing 'download_id'", "details": "The request body must contain the 'download_id' of the item to retry."}, status=400)
 
-        print(f"[API Route /civitai/retry] Received retry request for ID: {download_id}")
+        print(f"[API Route /huggingface/retry] Received retry request for ID: {download_id}")
         # Call manager method (which handles locking)
         result = await asyncio.to_thread(download_manager.retry_download, download_id) # Run sync manager method in thread
 
@@ -34,6 +34,6 @@ async def route_retry_download(request):
         return web.json_response({"error": "Invalid JSON body"}, status=400)
     except Exception as e:
         import traceback
-        print(f"Error handling /civitai/retry request for ID '{data.get('download_id', 'N/A')}': {e}")
+        print(f"Error handling /huggingface/retry request for ID '{data.get('download_id', 'N/A')}': {e}")
         # traceback.print_exc() # Uncomment for detailed logs
         return web.json_response({"error": "Internal Server Error", "details": f"An unexpected error occurred: {str(e)}"}, status=500)

@@ -7,7 +7,7 @@ from ...downloader.manager import manager as download_manager
 
 prompt_server = server.PromptServer.instance
 
-@prompt_server.routes.get("/civitai/status")
+@prompt_server.routes.get("/huggingface/status")
 async def route_get_status(request):
     """API Endpoint to get the status of downloads."""
     try:

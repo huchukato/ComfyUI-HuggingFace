@@ -10,7 +10,7 @@ from ...downloader.manager import manager as download_manager
 
 prompt_server = server.PromptServer.instance
 
-@prompt_server.routes.post("/civitai/open_path")
+@prompt_server.routes.post("/huggingface/open_path")
 async def route_open_path(request):
     """API Endpoint to open the containing folder of a completed download."""
     if not download_manager:
@@ -23,7 +23,7 @@ async def route_open_path(request):
         if not download_id:
             return web.json_response({"error": "Missing 'download_id'", "details": "The request body must contain the 'download_id' of the completed item."}, status=400)
 
-        print(f"[API Route /civitai/open_path] Received open path request for ID: {download_id}")
+        print(f"[API Route /huggingface/open_path] Received open path request for ID: {download_id}")
         # Call manager method in thread
         result = await asyncio.to_thread(download_manager.open_containing_folder, download_id)
 
@@ -42,7 +42,7 @@ async def route_open_path(request):
 
         # Prevent sensitive path info leakage in error messages by default
         if not result.get("success") and "error" in result and status_code != 200:
-             print(f"[API Route /civitai/open_path] Error for ID {download_id}: {result['error']}") # Log full error on server
+             print(f"[API Route /huggingface/open_path] Error for ID {download_id}: {result['error']}") # Log full error on server
              # Optionally sanitize error sent to client
              # if "Directory:" in result["error"] or "Path:" in result["error"]:
              #    result["error"] = "Server failed to open the specified directory."
@@ -53,6 +53,6 @@ async def route_open_path(request):
         return web.json_response({"error": "Invalid JSON body"}, status=400)
     except Exception as e:
         import traceback
-        print(f"Error handling /civitai/open_path request for ID '{data.get('download_id', 'N/A')}': {e}")
+        print(f"Error handling /huggingface/open_path request for ID '{data.get('download_id', 'N/A')}': {e}")
         # traceback.print_exc()
         return web.json_response({"error": "Internal Server Error", "details": f"An unexpected error occurred: {str(e)}"}, status=500)
