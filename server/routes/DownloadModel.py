@@ -103,7 +103,11 @@ async def route_download_model(request):
             raise web.HTTPBadRequest(reason=f"File already exists: {final_filename}")
 
         # Start download
-        download_url = f"https://huggingface.co/{target_model_id}/resolve/main/{target_filename}"
+        if target_filename is None:
+            # For repo downloads, don't construct URL - let huggingface_hub handle it
+            download_url = None
+        else:
+            download_url = f"https://huggingface.co/{target_model_id}/resolve/main/{target_filename}"
         
         download_info = {
             "model_url_or_id": model_url_or_id,
