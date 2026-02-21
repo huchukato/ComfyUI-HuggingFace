@@ -53,7 +53,7 @@ MODEL_TYPE_DIRS = {
 
 # HuggingFace API specific type mapping (for search filters)
 # Maps internal key (lowercase) to HuggingFace API 'types' parameter value
-CIVITAI_API_TYPE_MAP = {
+HUGGINGFACE_API_TYPE_MAP = {
     "checkpoint": "Checkpoint",
     "lora": "LORA",
     "locon": "LoCon",

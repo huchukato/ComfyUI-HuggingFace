@@ -9,7 +9,7 @@ from aiohttp import web
 import server # ComfyUI server instance
 from ..utils import get_request_json, resolve_huggingface_api_key
 from ...api.huggingface import HuggingFaceAPI
-from ...config import CIVITAI_API_TYPE_MAP
+from ...config import HUGGINGFACE_API_TYPE_MAP
 
 prompt_server = server.PromptServer.instance
 
@@ -44,8 +44,8 @@ async def route_search_models(request):
         if isinstance(model_type_keys, list) and model_type_keys and "any" not in model_type_keys:
             for key in model_type_keys:
                 # Map key.lower() for robustness - use the existing map from config
-                # CIVITAI_API_TYPE_MAP maps internal key -> HuggingFace API type name (e.g. 'lora' -> 'LORA')
-                api_type = CIVITAI_API_TYPE_MAP.get(key.lower())
+                # HUGGINGFACE_API_TYPE_MAP maps internal key -> HuggingFace API type name (e.g. 'lora' -> 'LORA')
+                api_type = HUGGINGFACE_API_TYPE_MAP.get(key.lower())
                 # Ensure we handle cases where the map might return None or duplicate types
                 if api_type and api_type not in api_types_filter:
                     api_types_filter.append(api_type)
