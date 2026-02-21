@@ -140,15 +140,24 @@ def parse_huggingface_input(url_or_id: str) -> tuple[str | None, str | None]:
     if "/resolve/main/" in url_or_id:
         try:
             parsed_url = urllib.parse.urlparse(url_or_id)
+            print(f"[DEBUG] Parsed URL: {parsed_url}")
+            print(f"[DEBUG] Path parts: {parsed_url.path.split('/')}")
             
             # Extract model ID from path
             path_parts = parsed_url.path.split('/')
+            print(f"[DEBUG] Path parts length: {len(path_parts)}")
+            print(f"[DEBUG] Path parts[2]: {path_parts[2] if len(path_parts) > 2 else 'None'}")
+            
             if len(path_parts) >= 4 and path_parts[2] == "resolve":
                 # URL format: /FX-FeiHou/wan2.2-Remix/resolve/main/NSFW/file.safetensors
                 model_id = "/".join(path_parts[0:2])  # FX-FeiHou/wan2.2-Remix
                 filename = "/".join(path_parts[3:])  # main/NSFW/file.safetensors
+                print(f"[DEBUG] Extracted model_id: {model_id}")
+                print(f"[DEBUG] Extracted filename: {filename}")
                 print(f"Parsed HF download URL - Model: {model_id}, File: {filename}")
                 return model_id, filename
+            else:
+                print(f"[DEBUG] Path does not match expected format")
         except Exception as e:
             print(f"Warning: Could not parse HF download URL '{url_or_id}': {e}")
             return None, None
