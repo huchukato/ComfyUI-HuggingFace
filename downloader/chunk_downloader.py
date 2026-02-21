@@ -39,7 +39,8 @@ class ChunkDownloader:
         self.temp_dir = self.output_path.parent / f".{self.output_path.name}.parts_{download_id or int(time.time())}"
         
         # Download configuration
-        self.num_connections = max(1, num_connections)
+        # Force single connection for HF downloads (like Civitai)
+        self.num_connections = 1  # HF is more reliable with single connection
         self.chunk_size = chunk_size
         self.manager = manager
         self.download_id = download_id
