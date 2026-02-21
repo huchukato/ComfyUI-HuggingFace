@@ -115,6 +115,7 @@ async def route_download_model(request):
         download_info = {
             "model_url_or_id": model_url_or_id,
             "save_path": save_path,
+            "output_path": save_path,  # Add this for ChunkDownloader
             "filename": final_filename,
             "model_type": model_type_value,
             "download_url": download_url,
