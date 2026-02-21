@@ -1,6 +1,6 @@
 // Renders active/queued/history download lists
 
-const PLACEHOLDER_IMAGE_URL = `images/placeholder.jpg`;
+const PLACEHOLDER_IMAGE_URL = `/extensions/HuggingFace.HuggingFaceDownloader/images/placeholder.jpg`;
 
 export function renderDownloadList(ui, items, container, emptyMessage) {
   if (!items || items.length === 0) {
