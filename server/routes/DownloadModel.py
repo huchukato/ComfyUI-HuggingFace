@@ -129,9 +129,13 @@ async def route_download_model(request):
 
         download_id = download_manager.add_to_queue(download_info)
         
+        # Extract model name from model_id for better display
+        model_display_name = target_model_id.split('/')[-1] if target_model_id else "Unknown Model"
+        
         response_data = {
             "download_id": download_id,
             "huggingface_model_id": target_model_id,
+            "huggingface_model_name": model_display_name,  # Add model name
             "huggingface_filename": target_filename,
             "huggingface_model_info": model_info,
             "save_path": save_path,
