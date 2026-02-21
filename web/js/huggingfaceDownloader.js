@@ -7,7 +7,7 @@ console.log("Loading HuggingFace UI...");
 // --- Configuration ---
 const EXTENSION_NAME = "HuggingFace";
 const CSS_URL = `../huggingfaceDownloader.css`;
-const PLACEHOLDER_IMAGE_URL = `/extensions/HuggingFace.HuggingFaceDownloader/images/placeholder.jpg`;
+const PLACEHOLDER_IMAGE_URL = `/extensions/ComfyUI-HuggingFace/images/placeholder.jpg`;
 
 // Add Menu Button to ComfyUI
 function addMenuButton() {
@@ -69,7 +69,7 @@ function addMenuButton() {
 
 // --- Initialization ---
 app.registerExtension({
-    name: "HuggingFace.HuggingFaceDownloader",
+    name: "ComfyUI-HuggingFace.HuggingFaceDownloader",
     async setup(appInstance) {
         console.log(`[${EXTENSION_NAME}] Setting up HuggingFace Extension...`);
         addCssLink(CSS_URL);
