@@ -1,197 +1,202 @@
-# ComfyUI-HuggingFace - Downloader Modelli HuggingFace per ComfyUI
+# ComfyUI-HuggingFace - HuggingFace Model Downloader for ComfyUI
 
 [![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://python.org)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![ComfyUI](https://img.shields.io/badge/ComfyUI-Compatible-orange.svg)](https://github.com/comfyanonymous/ComfyUI)
 [![HuggingFace](https://img.shields.io/badge/HuggingFace-Integrated-yellow.svg)](https://huggingface.co)
+[![Italian](https://img.shields.io/badge/Language-🇮🇹-Italian-red.svg)](README_IT.md)
 
 ComfyUI-HuggingFace integra perfettamente l'enorme repository di modelli HuggingFace direttamente in ComfyUI, permettendoti di cercare, scaricare e organizzare modelli AI senza lasciare il tuo workflow.
 
 ![ComfyUI-HuggingFace](https://github.com/user-attachments/assets/3867b704-1b14-4c02-87d4-fc2a61deeb42)
 
-## ✨ Funzionalità
+## ✨ Features
 
-### 🔍 **Ricerca e Scoperta Avanzata**
-- **Integrazione Completa HuggingFace**: Cerca nell'intera libreria HuggingFace direttamente da ComfyUI
-- **Filtraggio Intelligente**: Filtra per tipi di modelli (LoRA, Checkpoints, Diffusers, ecc.)
-- **Filtraggio Base Model**: Filtra per SD 1.5, SDXL, Pony e altri modelli base
-- **Opzioni di Ordinamento**: Ordina per download, like, più recenti o pertinenza
-- **Supporto NSFW**: Contenuto NSFW abilitato di default (può essere disabilitato)
-- **Risultati in Tempo Reale**: Risultati di ricerca istantanei con anteprime modelli
+### 🔍 **Advanced Search & Discovery**
+- **Full HuggingFace Integration**: Search HuggingFace's entire model library directly from ComfyUI
+- **Smart Filtering**: Filter by model types (LoRA, Checkpoints, Diffusers, etc.)
+- **Base Model Filtering**: Filter by SD 1.5, SDXL, Pony, and other base models
+- **Multiple Sort Options**: Sort by downloads, likes, newest, or relevancy
+- **NSFW Support**: NSFW content enabled by default (can be disabled)
+- **Real-time Results**: Instant search results with model previews
 
-### 📥 **Sistema Download Intelligente**
-- **Modalità Download Duali**: 
-  - **File Singoli**: Scarica file specifici con `hf_hub_download`
-  - **Repo Complete**: Scarica interi repository con `snapshot_download` (perfetto per Diffusers)
-- **Rilevamento Automatico Tipi**: Categorizzazione automatica dei modelli (checkpoints, LoRA, ecc.)
-- **Preservazione Metadata**: Download includono schede modelli, descrizioni e statistiche
-- **Supporto Resume**: Riprendi download interrotti
-- **Download Multi-connessione**: Download più veloci con connessioni parallele
+### 📥 **Intelligent Download System**
+- **Dual Download Modes**: 
+  - **Single Files**: Download specific model files with `hf_hub_download`
+  - **Full Repos**: Download entire repositories with `snapshot_download` (perfect for Diffusers)
+- **Automatic Type Detection**: Smart categorization of models (checkpoints, LoRAs, etc.)
+- **Metadata Preservation**: Downloads include model cards, descriptions, and statistics
+- **Resume Support**: Resume interrupted downloads
+- **Multi-connection Downloads**: Faster downloads with parallel connections
 
-### 🎯 **Gestione Modelli**
-- **Organizzazione Automatica**: Modelli salvati nelle directory corrette di ComfyUI
-- **Supporto Filename Personalizzati**: Rinomina modelli durante il download
-- **Immagini Anteprima**: Scarica e mostra miniature modelli
-- **Controllo Versioni**: Traccia versioni e aggiornamenti modelli
-- **Cronologia Download**: Visualizza e gestisci cronologia download
+### 🎯 **Model Management**
+- **Automatic Organization**: Models saved to correct ComfyUI directories
+- **Custom Filename Support**: Rename models during download
+- **Preview Images**: Download and display model thumbnails
+- **Version Control**: Track model versions and updates
+- **Download History**: View and manage download history
 
-### 🛠 **Funzionalità Tecniche**
-- **Puro huggingface_hub**: Usa esclusivamente la libreria ufficiale `huggingface_hub`
-- **Nessuna Dipendenza REST API**: Elimina chiamate API inaffidabili
-- **Gestione Errori Robusta**: Fallback graceful per informazioni mancanti
-- **Supporto Repository Privati**: Accedi modelli privati con token API
-- **Messaggi Errore Puliti**: Notifiche user-friendly senza errori spaventosi
+### 🛠 **Technical Features**
+- **Pure huggingface_hub**: Uses official `huggingface_hub` library exclusively
+- **No REST API Dependencies**: Eliminates unreliable API calls
+- **Robust Error Handling**: Graceful fallbacks for missing information
+- **Private Repository Support**: Access private models with API tokens
+- **Clean Error Messages**: User-friendly notifications without scary errors
 
-## 🚀 Installazione
+## 🚀 Installation
 
-### Installazione Automatica (Raccomandata)
-1. Apri ComfyUI Manager
-2. Cerca "ComfyUI-HuggingFace"
-3. Clicca Installa
+### Automatic Installation (Recommended)
+1. Open ComfyUI Manager
+2. Search for "ComfyUI-HuggingFace"
+3. Click Install
 
-### Installazione Manuale
+### Manual Installation
 ```bash
 cd ComfyUI/custom_nodes
 git clone https://github.com/huchukato/ComfyUI-HuggingFace.git
 ```
 
-## 📖 Utilizzo
+## 📖 Usage
 
-1. **Avvia ComfyUI** con ComfyUI-HuggingFace installato
-2. **Accedi al Pannello**: Clicca il pulsante HuggingFace nell'area in alto a destra
-3. **Cerca Modelli**: Usa la barra di ricerca con filtri e opzioni di ordinamento
-4. **Anteprima Modelli**: Clicca su qualsiasi modello per vedere dettagli e anteprima
-5. **Download**: Clicca il pulsante download per salvare modelli localmente
-6. **Usa in ComfyUI**: I modelli appaiono automaticamente nei nodi ComfyUI
+1. **Start ComfyUI** with ComfyUI-HuggingFace installed
+2. **Access the Panel**: Click the HuggingFace button in the top-right area
+3. **Search Models**: Use the search bar with filters and sorting options
+4. **Preview Models**: Click on any model to see details and preview
+5. **Download**: Click the download button to save models locally
+6. **Use in ComfyUI**: Models appear automatically in ComfyUI nodes
 
-## ⚙️ Configurazione
+## ⚙️ Configuration
 
-### Token API HuggingFace (Opzionale ma Raccomandato)
-- **Variabile Ambiente**: `HUGGINGFACE_API_KEY`
-- **Impostazioni App**: Inserisci token nelle impostazioni ComfyUI-HuggingFace
-- **Benefici**: Limiti rate più alti, accesso a modelli privati
+### HuggingFace API Token (Optional but Recommended)
+- **Environment Variable**: `HUGGINGFACE_API_KEY`
+- **In-App Settings**: Enter token in ComfyUI-HuggingFace settings
+- **Benefits**: Higher rate limits, access to private models
 
-### Download Root Globale (Opzionale)
-- **Impostazione**: Directory download personalizzata
-- **Formato**: `<global_root>/<model_type>`
-- **Esempio**: `/runpod-volume/ComfyUI/checkpoints`
-- **Default**: Usa percorsi standard ComfyUI quando vuoto
+### Global Download Root (Optional)
+- **Setting**: Custom download directory
+- **Format**: `<global_root>/<model_type>`
+- **Example**: `/runpod-volume/ComfyUI/checkpoints`
+- **Default**: Uses standard ComfyUI paths when empty
 
-## 📁 Tipi Modelli Supportati
+## 📁 Supported Model Types
 
-| Tipo | Descrizione | Directory |
+| Type | Description | Directory |
 |-------|-------------|------------|
-| **Checkpoints** | File modelli principali (.safetensors, .bin) | `checkpoints/` |
-| **LoRAs** | Modelli Low-Rank Adaptation | `loras/` |
-| **Diffusers** | Pipeline diffusion complete | `diffusers/` |
-| **Text Encoders** | Modelli encoder CLIP e altri | `text_encoders/` |
+| **Checkpoints** | Main model files (.safetensors, .bin) | `checkpoints/` |
+| **LoRAs** | Low-Rank Adaptation models | `loras/` |
+| **Diffusers** | Complete diffusion pipelines | `diffusers/` |
+| **Text Encoders** | CLIP and encoder models | `text_encoders/` |
 | **VAEs** | Variational Autoencoders | `vae/` |
-| **Embeddings** | Modelli embedding testo | `embeddings/` |
-| **ControlNet** | Modelli control | `controlnet/` |
-| **IP-Adapters** | Modelli adapter immagine | `ip_adapters/` |
-| **Custom** | Qualsiasi tipo modello da HuggingFace | Definito dall'utente |
+| **Embeddings** | Text embedding models | `embeddings/` |
+| **ControlNet** | Control models | `controlnet/` |
+| **IP-Adapters** | Image adapter models | `ip_adapters/` |
+| **Custom** | Any model type from HuggingFace | User-defined |
 
-## 🔧 Implementazione Tecnica
+## 🔧 Technical Implementation
 
-### Tecnologie Core
-- **huggingface_hub**: Libreria Python ufficiale HuggingFace
-- **snapshot_download**: Per download repository completi
-- **hf_hub_download**: Per download file singoli
-- **ModelCard**: Per leggere metadata e descrizioni modelli
-- **HfApi**: Per cercare e listare modelli
+### Core Technologies
+- **huggingface_hub**: Official HuggingFace Python library
+- **snapshot_download**: For complete repository downloads
+- **hf_hub_download**: For single file downloads
+- **ModelCard**: For reading model metadata and descriptions
+- **HfApi**: For searching and listing models
 
-### Endpoint API
-- `POST /api/huggingface/search` - Ricerca modelli con filtri
-- `POST /api/huggingface/get_model_details` - Informazioni modello
-- `POST /api/huggingface/download` - Avvia download
-- `GET /api/huggingface/base_models` - Modelli base disponibili
-- `POST /api/huggingface/cancel` - Cancella download
-- `GET /api/huggingface/download_status` - Progresso download
-- `GET /api/huggingface/history` - Cronologia download
-- `GET /api/huggingface/model_dirs` - Directory modelli disponibili
+### API Endpoints
+- `POST /api/huggingface/search` - Model search with filters
+- `POST /api/huggingface/get_model_details` - Model information
+- `POST /api/huggingface/download` - Initiate downloads
+- `GET /api/huggingface/base_models` - Available base models
+- `POST /api/huggingface/cancel` - Cancel downloads
+- `GET /api/huggingface/download_status` - Download progress
+- `GET /api/huggingface/history` - Download history
+- `GET /api/huggingface/model_dirs` - Available model directories
 
-### Strategia Gestione Errori
-1. **Primario**: Usa funzioni `huggingface_hub` direttamente
-2. **Fallback 1**: Prova chiamate API per metadata aggiuntive
-3. **Fallback 2**: Restituisce informazioni minime senza errori
-4. **UI**: Mostra messaggi user-friendly invece di errori spaventosi
+### Error Handling Strategy
+1. **Primary**: Use `huggingface_hub` functions directly
+2. **Fallback 1**: Try API calls for additional metadata
+3. **Fallback 2**: Return minimal information without errors
+4. **UI**: Show user-friendly messages instead of scary errors
 
-## 🔄 Migrazione da Civicomfy
+## 🔄 Migration from Civicomfy
 
-Questo è una riscrittura completa di Civicomfy con integrazione HuggingFace:
+This is a complete rewrite of Civicomfy with HuggingFace integration:
 
-### Cosa È Cambiato
-- ✅ **Sostituita API Civitai** con API HuggingFace
-- ✅ **Aggiornato parsing URL** per struttura modelli HF
-- ✅ **Mantenuta UI/UX pulita** dall'originale
-- ✅ **Aggiunte funzionalità HF-specifiche** (download repo, schede modelli)
-- ✅ **Migliorata gestione errori** e esperienza utente
-- ✅ **Rimosse dipendenze REST API** per affidabilità
+### What Changed
+- ✅ **Replaced Civitai API** with HuggingFace API
+- ✅ **Updated URL parsing** for HF model structure  
+- ✅ **Maintained clean UI/UX** from original
+- ✅ **Added HF-specific features** (repo downloads, model cards)
+- ✅ **Improved error handling** and user experience
+- ✅ **Removed REST API dependencies** for reliability
 
-### Cosa È Meglio
-- 🚀 **Più Affidabile**: Libreria ufficiale `huggingface_hub`
-- 🎯 **Più Modelli**: Accesso all'intero repository HuggingFace
-- 📁 **Download Intelligenti**: Rilevamento repo vs file singolo
-- 🛡️ **Migliore Sicurezza**: Niente più costruzione URL diretta
-- 🎨 **UI Più Pulita**: Niente più messaggi errore spaventosi
+### What's Better
+- 🚀 **More Reliable**: Official `huggingface_hub` library
+- 🎯 **More Models**: Access to entire HuggingFace repository
+- 📁 **Smart Downloads**: Repo vs single file detection
+- 🛡️ **Better Security**: No more direct URL construction
+- 🎨 **Cleaner UI**: No scary error messages
 
-## 🤝 Contributi
+## 🤝 Contributing
 
-I contributi sono benvenuti! Sentiti libero di inviare una Pull Request.
+Contributions are welcome! Please feel free to submit a Pull Request.
 
-### Aree di Contributo
-- **Tipi Modelli Aggiuntivi**: Supporto per nuovi formati modelli
-- **Miglioramenti UI/UX**: Migliore interfaccia utente ed esperienza
-- **Ottimizzazioni Performance**: Download e ricerca più veloci
-- **Bug Fix**: Test e risoluzione problemi
-- **Documentazione**: Miglioramento guide ed esempi
+### Areas for Contribution
+- **Additional Model Types**: Support for new model formats
+- **UI/UX Improvements**: Better user interface and experience
+- **Performance Optimizations**: Faster downloads and search
+- **Bug Fixes**: Testing and issue resolution
+- **Documentation**: Improving guides and examples
 
-### Setup Sviluppo
+### Development Setup
 ```bash
 git clone https://github.com/huchukato/ComfyUI-HuggingFace.git
 cd ComfyUI-HuggingFace
-# Installa dipendenze
+# Install dependencies
 pip install -r requirements.txt
-# Testa con ComfyUI
+# Test with ComfyUI
 ```
 
-## 📋 Requisiti
+## 📋 Requirements
 
-### Requisiti Sistema
-- **ComfyUI**: Versione più recente raccomandata
+### System Requirements
+- **ComfyUI**: Latest version recommended
 - **Python**: 3.8+ 
-- **Memoria**: 4GB+ RAM raccomandata
-- **Storage**: Spazio sufficiente per download modelli
+- **Memory**: 4GB+ RAM recommended
+- **Storage**: Sufficient space for model downloads
 
-### Dipendenze Python
-- `huggingface_hub>=0.20.0` - Integrazione HuggingFace
-- `requests>=2.25.0` - Richieste HTTP
-- `aiohttp` - Server web async (ComfyUI)
+### Python Dependencies
+- `huggingface_hub>=0.20.0` - HuggingFace integration
+- `requests>=2.25.0` - HTTP requests
+- `aiohttp` - Async web server (ComfyUI)
 
-### Dipendenze Opzionali
-- `HUGGINGFACE_API_KEY` - Per limiti rate più alti
-- Directory modelli personalizzate - Per organizzazione
+### Optional Dependencies
+- `HUGGINGFACE_API_KEY` - For higher rate limits
+- Custom model directories - For organization
 
-## 📄 Licenza
+## 📄 License
 
-Questo progetto segue la stessa licenza del progetto originale Civicomfy.
+This project follows the same license as the original Civicomfy project.
 
-## 🙏 Ringraziamenti
+## 🙏 Acknowledgments
 
-- **[Civicomfy](https://github.com/MoonGoblinDev/Civicomfy)** di MoonGoblinDev - Ispirazione originale e base
-- **[HuggingFace](https://huggingface.co)** - Repository modelli e API incredibili
-- **[Comunità ComfyUI](https://github.com/comfyanonymous/ComfyUI)** - Feedback, test e supporto
-- **[huggingface_hub](https://github.com/huggingface/huggingface_hub)** - Libreria Python ufficiale
+- **[Civicomfy](https://github.com/MoonGoblinDev/Civicomfy)** by MoonGoblinDev - Original inspiration and base
+- **[HuggingFace](https://huggingface.co)** - Amazing model repository and API
+- **[ComfyUI Community](https://github.com/comfyanonymous/ComfyUI)** - Feedback, testing, and support
+- **[huggingface_hub](https://github.com/huggingface/huggingface_hub)** - Official Python library
 
-## 📞 Supporto
+## 📞 Support
 
-- **Issues**: Riporta bug tramite GitHub Issues
-- **Funzionalità**: Richiedi funzionalità tramite GitHub Discussions  
-- **Discord**: Unisciti alla comunità ComfyUI
-- **Aggiornamenti**: Segui il repository per ultime funzionalità
+- **Issues**: Report bugs via GitHub Issues
+- **Features**: Request features via GitHub Discussions  
+- **Discord**: Join the ComfyUI community
+- **Updates**: Follow the repository for latest features
 
 ---
 
-**⭐ Se trovi utile, per favore dai una stella su GitHub!**
+**⭐ If you find this useful, please give it a star on GitHub!**
 
-**Fatto con ❤️ per la comunità ComfyUI**
+**Made with ❤️ for the ComfyUI community**
+
+---
+
+**🇮🇹 [Italian Documentation](README_IT.md)** - Read the docs in Italian
