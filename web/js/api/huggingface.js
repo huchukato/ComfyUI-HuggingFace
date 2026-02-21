@@ -42,7 +42,7 @@ export class HuggingFaceDownloaderAPI {
   }
 
   static async downloadModel(params) {
-    return await this._request("/api/huggingface/download", {
+    return await this._request("/huggingface/download", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(params),
@@ -50,7 +50,7 @@ export class HuggingFaceDownloaderAPI {
   }
 
   static async getModelDetails(params) {
-    return await this._request("/api/huggingface/get_model_details", {
+    return await this._request("/huggingface/get_model_details", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(params),
@@ -58,11 +58,11 @@ export class HuggingFaceDownloaderAPI {
   }
 
   static async getStatus() {
-    return await this._request("/api/huggingface/status");
+    return await this._request("/huggingface/status");
   }
 
   static async cancelDownload(downloadId) {
-    return await this._request("/api/huggingface/cancel", {
+    return await this._request("/huggingface/cancel", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ download_id: downloadId }),
@@ -70,7 +70,7 @@ export class HuggingFaceDownloaderAPI {
   }
 
   static async searchModels(params) {
-    return await this._request("/api/huggingface/search", {
+    return await this._request("/huggingface/search", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(params),
@@ -78,20 +78,20 @@ export class HuggingFaceDownloaderAPI {
   }
 
   static async getBaseModels() {
-    return await this._request("/api/huggingface/base_models");
+    return await this._request("/huggingface/base_models");
   }
 
   static async getModelTypes() {
-    return await this._request("/api/huggingface/model_types");
+    return await this._request("/huggingface/model_types");
   }
 
   static async getModelDirs(modelType) {
     const q = encodeURIComponent(modelType || 'checkpoints');
-    return await this._request(`/api/huggingface/model_dirs?type=${q}`);
+    return await this._request(`/huggingface/model_dirs?type=${q}`);
   }
 
   static async createModelDir(modelType, newDir, root = "") {
-    return await this._request("/api/huggingface/create_dir", {
+    return await this._request("/huggingface/create_dir", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ model_type: modelType, new_dir: newDir, root }),
@@ -99,7 +99,7 @@ export class HuggingFaceDownloaderAPI {
   }
 
   static async createModelType(name) {
-    return await this._request("/api/huggingface/create_model_type", {
+    return await this._request("/huggingface/create_model_type", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ name }),
@@ -108,11 +108,11 @@ export class HuggingFaceDownloaderAPI {
 
   static async getModelRoots(modelType) {
     const q = encodeURIComponent(modelType || 'checkpoints');
-    return await this._request(`/api/huggingface/model_roots?type=${q}`);
+    return await this._request(`/huggingface/model_roots?type=${q}`);
   }
 
   static async createModelRoot(modelType, absPath) {
-    return await this._request("/api/huggingface/create_root", {
+    return await this._request("/huggingface/create_root", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ model_type: modelType, path: absPath }),
@@ -120,11 +120,11 @@ export class HuggingFaceDownloaderAPI {
   }
 
   static async getGlobalRoot() {
-    return await this._request("/api/huggingface/global_root");
+    return await this._request("/huggingface/global_root");
   }
 
   static async setGlobalRoot(path) {
-    return await this._request("/api/huggingface/global_root", {
+    return await this._request("/huggingface/global_root", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ path }),
@@ -132,7 +132,7 @@ export class HuggingFaceDownloaderAPI {
   }
 
   static async clearGlobalRoot() {
-    return await this._request("/api/huggingface/global_root/clear", {
+    return await this._request("/huggingface/global_root/clear", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({}),
@@ -140,7 +140,7 @@ export class HuggingFaceDownloaderAPI {
   }
 
   static async retryDownload(downloadId) {
-    return await this._request("/api/huggingface/retry", {
+    return await this._request("/huggingface/retry", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ download_id: downloadId }),
@@ -148,7 +148,7 @@ export class HuggingFaceDownloaderAPI {
   }
 
   static async openPath(downloadId) {
-    return await this._request("/api/huggingface/open_path", {
+    return await this._request("/huggingface/open_path", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ download_id: downloadId }),
