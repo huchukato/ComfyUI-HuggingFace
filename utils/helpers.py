@@ -88,8 +88,20 @@ def get_model_dir(model_type: str, explicit_save_root: str = "", selected_subdir
                 try:
                     return folder_paths.get_folder_paths(normalized_type)[0]
                 except:
-                    # Fallback to custom_nodes directory
-                    return os.path.join(folder_paths.base_path, "custom_nodes", normalized_type)
+                    # Fallback: check if unet exists, otherwise use diffusion_models
+                    if normalized_type == "unet":
+                        try:
+                            return folder_paths.get_folder_paths("unet")[0]
+                        except:
+                            # If unet doesn't exist, use diffusion_models
+                            return folder_paths.get_folder_paths("diffusion_models")[0]
+                    else:
+                        # For other types, try diffusion_models first
+                        try:
+                            return folder_paths.get_folder_paths("diffusion_models")[0]
+                        except:
+                            # Fallback to custom_nodes directory
+                            return os.path.join(folder_paths.base_path, "custom_nodes", normalized_type)
             else:
                 # For other types, use our extension directory instead of custom_nodes
                 from ..config import PLUGIN_ROOT
