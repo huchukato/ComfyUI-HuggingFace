@@ -649,13 +649,21 @@ class DownloadManager:
                        self._update_download_status(download_id, status="cancelled", error="Cancelled before start")
                        return
 
-                  self.active_downloads[download_id]["downloader_instance"] = downloader
+                  # Only set downloader_instance for file downloads
+                  if url is not None:
+                      self.active_downloads[download_id]["downloader_instance"] = downloader
 
             self._update_download_status(download_id, status="downloading")
             print(f"[Downloader Wrapper {download_id}] Starting download process for '{filename}'.")
-            success = downloader.download() # Blocking call
-
-            error_msg = downloader.error
+            
+            # For repo downloads, success is already determined
+            if url is None:
+                # Repo download already completed above
+                print(f"[Downloader Wrapper {download_id}] Repo download already completed")
+            else:
+                # File download - use ChunkDownloader
+                success = downloader.download() # Blocking call
+                error_msg = downloader.error
 
             if success:
                 final_status = "completed"
