@@ -1,6 +1,6 @@
 // Renders active/queued/history download lists
 
-const PLACEHOLDER_IMAGE_URL = `web/images/placeholder.jpg`;
+const PLACEHOLDER_IMAGE_URL = `custom_nodes/ComfyUI-HuggingFace/web/images/placeholder.jpg`;
 
 export function renderDownloadList(ui, items, container, emptyMessage) {
   if (!items || items.length === 0) {
