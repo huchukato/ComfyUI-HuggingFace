@@ -128,7 +128,7 @@ export function modalTemplate(settings = {}) {
                 <div class="huggingface-form-group">
                   <label for="huggingface-settings-api-key">HuggingFace API Key (Optional)</label>
                   <input type="password" id="huggingface-settings-api-key" class="huggingface-input" placeholder="Enter API key for higher limits / authenticated access" autocomplete="new-password">
-                  <p style="font-size: 0.85em; color: #bbb; margin-top: 5px;">Needed for some downloads/features. Leave blank to use server env <code>CIVITAI_API_KEY</code>. Find keys at huggingface.com/user/account</p>
+                  <p style="font-size: 0.85em; color: #bbb; margin-top: 5px;">Needed for some downloads/features. Leave blank to use server env <code>HUGGINGFACE_API_KEY</code>. Find keys at huggingface.com/user/account</p>
                 </div>
                 <div class="huggingface-form-group">
                   <label for="huggingface-settings-global-root">Global Download Root (Optional)</label>
