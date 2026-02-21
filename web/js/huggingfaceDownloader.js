@@ -25,9 +25,9 @@ function addMenuButton() {
     }
 
     const huggingfaceButton = document.createElement("button");
-    huggingfaceButton.textContent = "HuggingFace";
+    huggingfaceButton.innerHTML = "🤗 HuggingFace";
     huggingfaceButton.id = "huggingface-downloader-button";
-    huggingfaceButton.title = "Open HuggingFace";
+    huggingfaceButton.title = "Open HuggingFace Model Downloader";
 
     huggingfaceButton.onclick = async () => {
         if (!window.huggingfaceDownloaderUI) {
