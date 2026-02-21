@@ -173,6 +173,12 @@ class HuggingFaceAPI:
             return result
         return result
 
+    def get_model_version_info(self, version_id: str) -> Optional[Dict[str, Any]]:
+        """Gets version information - not applicable for HuggingFace, returns empty dict"""
+        # HuggingFace doesn't have version IDs like Civitai
+        # This method is kept for compatibility but returns empty
+        return {}
+
     def download_file(self, model_id: str, filename: str, local_dir: str = None) -> Optional[Union[requests.Response, str]]:
         """Downloads a specific file from HuggingFace. Uses huggingface_hub if available."""
         if HF_HUB_AVAILABLE and local_dir:
