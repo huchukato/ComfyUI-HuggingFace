@@ -137,7 +137,23 @@ async def route_download_model(request):
         print(f"[DEBUG] model_info: {model_info}")
         print(f"[DEBUG] target_model_id: {target_model_id}")
         
-        if model_info and isinstance(model_info, dict) and model_info.get('name'):
+        # Try to parse model_info as JSON if it's a string
+        parsed_model_info = None
+        if isinstance(model_info, str):
+            try:
+                import json
+                parsed_model_info = json.loads(model_info)
+                print(f"[DEBUG] Parsed model_info from JSON: {parsed_model_info}")
+            except:
+                print(f"[DEBUG] Failed to parse model_info as JSON")
+                parsed_model_info = None
+        else:
+            parsed_model_info = model_info
+        
+        if parsed_model_info and isinstance(parsed_model_info, dict) and parsed_model_info.get('name'):
+            model_display_name = parsed_model_info['name']
+            print(f"[DEBUG] Using parsed model_info name: {model_display_name}")
+        elif model_info and isinstance(model_info, dict) and model_info.get('name'):
             model_display_name = model_info['name']
             print(f"[DEBUG] Using model_info name: {model_display_name}")
         else:
