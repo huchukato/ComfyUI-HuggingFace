@@ -613,7 +613,15 @@ class DownloadManager:
                 # For repo downloads, just use huggingface_hub snapshot_download directly
                 from huggingface_hub import snapshot_download
                 
-                model_id = download_info["model_url_or_id"]
+                # Extract just the repo_id from model_url_or_id (remove URL part)
+                model_url_or_id = download_info["model_url_or_id"]
+                if model_url_or_id.startswith("https://huggingface.co/"):
+                    # Extract repo_id from URL like "https://huggingface.co/Kijai/WanVideo_comfy/resolve/..."
+                    parts = model_url_or_id.replace("https://huggingface.co/", "").split("/")
+                    model_id = f"{parts[0]}/{parts[1]}"  # Get "Kijai/WanVideo_comfy"
+                else:
+                    model_id = model_url_or_id  # Already just the repo_id
+                
                 output_path = download_info["output_path"]
                 
                 print(f"[Downloader Wrapper {download_id}] Downloading repo {model_id} to {output_path}")
