@@ -34,13 +34,15 @@ export async function fetchAndDisplayDownloadPreview(ui) {
                 await ui.autoSelectModelTypeFromHuggingFace(result.model_type);
             }
         } else {
-            const message = `Failed to get details: ${result.details || result.error || 'Unknown backend error'}`;
-            ui.downloadPreviewArea.innerHTML = `<p style="color: var(--error-text, #ff6b6b);">${message}</p>`;
+            // Don't show error for missing details - just show neutral message
+            const message = result.details || result.error || 'Model details not available';
+            ui.downloadPreviewArea.innerHTML = `<p style="color: var(--input-text, #ccc);">${message}</p>`;
         }
     } catch (error) {
-        const message = `Error fetching details: ${error.details || error.message || 'Unknown error'}`;
-        console.error("Download Preview Fetch Error:", error);
-        ui.downloadPreviewArea.innerHTML = `<p style="color: var(--error-text, #ff6b6b);">${message}</p>`;
+        // Don't show scary error messages - just neutral info
+        const message = 'Model details not available';
+        console.info("Download Preview - details not available:", error);
+        ui.downloadPreviewArea.innerHTML = `<p style="color: var(--input-text, #ccc);">${message}</p>`;
     }
 }
 
