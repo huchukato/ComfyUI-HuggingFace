@@ -8,8 +8,7 @@ import re
 from aiohttp import web
 
 import server # ComfyUI server instance
-from ..utils import get_request_json
-from .utils import resolve_huggingface_api_key
+from ..utils import get_request_json, resolve_huggingface_api_key
 from ...downloader.manager import manager as download_manager
 from ...api.huggingface import HuggingFaceAPI
 from ...utils.helpers import get_model_dir, parse_huggingface_input, sanitize_filename
