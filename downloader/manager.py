@@ -85,7 +85,9 @@ class DownloadManager:
                     elif key == 'num_connections':
                         download_info[key] = DEFAULT_CONNECTIONS
                     elif key == 'force_redownload':
-                        download_info[key] = False # Default for new downloads
+                        download_info[key] = False
+                    elif key == 'huggingface_model_name':
+                        download_info[key] = None
                     else:
                         download_info[key] = None
                     print(f"[Manager Warning] Queued item '{download_id}' missing '{key}', added default.")
