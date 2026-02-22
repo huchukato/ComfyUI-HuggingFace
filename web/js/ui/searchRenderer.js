@@ -80,6 +80,8 @@ export function renderSearchResults(ui, items) {
                 data-model-id="${modelId}"
                 data-version-id="${versionId || ''}"
                 data-model-type="${modelTypeApi || ''}"
+                data-creator="${creator}"
+                data-model-name="${modelName}"
                 ${!versionId ? 'disabled title="Version ID missing, cannot pre-fill"' : 'title="Pre-fill Download Tab"'} >
           <span class="base-model-badge">${baseModel}</span> ${versionName} <i class="fas fa-download"></i>
         </button>
@@ -111,6 +113,8 @@ export function renderSearchResults(ui, items) {
                       data-model-id="${modelId}"
                       data-version-id="${versionId || ''}"
                       data-model-type="${modelTypeApi || ''}"
+                      data-creator="${creator}"
+                      data-model-name="${modelName}"
                       ${!versionId ? 'disabled title="Version ID missing, cannot pre-fill"' : 'title="Pre-fill Download Tab"'} >
                 <span class="base-model-badge">${baseModel}</span> ${versionName} <i class="fas fa-download"></i>
               </button>
@@ -168,7 +172,7 @@ export function renderSearchResults(ui, items) {
         ` : ''}
       </div>
       <div class="huggingface-search-actions">
-        <a href="https://huggingface.com/models/${modelId}${primaryVersionId ? '?modelVersionId='+primaryVersionId : ''}" 
+        <a href="https://huggingface.co/${modelId}${primaryVersionId ? '?modelVersionId='+primaryVersionId : ''}" 
            target="_blank" rel="noopener noreferrer" class="huggingface-button small" 
            title="Open on HuggingFace website">
           View <i class="fas fa-external-link-alt"></i>
