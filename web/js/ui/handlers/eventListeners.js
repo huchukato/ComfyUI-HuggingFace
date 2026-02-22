@@ -190,7 +190,7 @@ export function setupEventListeners(ui) {
         const downloadButton = event.target.closest('.huggingface-search-download-button');
         if (downloadButton) {
             event.preventDefault();
-            const { modelId, versionId, modelType } = downloadButton.dataset;
+            const { modelId, versionId, modelType, creator, modelName } = downloadButton.dataset;
             if (!modelId || !versionId) {
                 ui.showToast("Error: Missing data for download.", "error");
                 return;
@@ -199,12 +199,12 @@ export function setupEventListeners(ui) {
 
             ui.modelUrlInput.value = modelId;
             ui.modelVersionIdInput.value = versionId;
-            ui.customFilenameInput.value = '';
+            ui.customFilenameInput.value = modelName ? `${modelName.replace(/[^a-zA-Z0-9_-]/g, '_')}` : '';
             ui.forceRedownloadCheckbox.checked = false;
             ui.downloadModelTypeSelect.value = modelTypeInternalKey;
 
             ui.switchTab('download');
-            ui.showToast(`Filled download form for Model ID ${modelId}.`, 'info', 4000);
+            ui.showToast(`Filled download form for "${modelName || modelId}" by ${creator || 'Unknown'}.`, 'info', 4000);
             ui.fetchAndDisplayDownloadPreview();
             return;
         }
