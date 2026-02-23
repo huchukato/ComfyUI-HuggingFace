@@ -25,6 +25,9 @@ export function renderSearchResults(ui, items) {
     const modelId = hit.id;
     if (!modelId) return;
 
+    // Extract base repository ID from full path (remove /tree/main, /blob/main, etc.)
+    const baseRepoId = modelId.split('/tree/')[0].split('/blob/')[0].split('/raw/')[0];
+
     const creator = hit.user?.username || 'Unknown Creator';
     const modelName = hit.name || 'Untitled Model';
     const modelTypeApi = hit.type || 'other';
@@ -77,7 +80,7 @@ export function renderSearchResults(ui, items) {
       const baseModel = version.baseModel || 'N/A';
       return `
         <button class="huggingface-button primary small huggingface-search-download-button"
-                data-model-id="${modelId}"
+                data-model-id="${baseRepoId}"
                 data-version-id="${versionId || ''}"
                 data-model-type="${modelTypeApi || ''}"
                 data-creator="${creator}"
@@ -110,7 +113,7 @@ export function renderSearchResults(ui, items) {
             const baseModel = version.baseModel || 'N/A';
             return `
               <button class="huggingface-button primary small huggingface-search-download-button"
-                      data-model-id="${modelId}"
+                      data-model-id="${baseRepoId}"
                       data-version-id="${versionId || ''}"
                       data-model-type="${modelTypeApi || ''}"
                       data-creator="${creator}"
@@ -172,7 +175,7 @@ export function renderSearchResults(ui, items) {
         ` : ''}
       </div>
       <div class="huggingface-search-actions">
-        <a href="https://huggingface.co/${modelId}${primaryVersionId ? '?modelVersionId='+primaryVersionId : ''}" 
+        <a href="https://huggingface.co/${baseRepoId}${primaryVersionId ? '?modelVersionId='+primaryVersionId : ''}" 
            target="_blank" rel="noopener noreferrer" class="huggingface-button small" 
            title="Open on HuggingFace website">
           View <i class="fas fa-external-link-alt"></i>
