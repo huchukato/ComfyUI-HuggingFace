@@ -82,7 +82,7 @@ export function renderSearchResults(ui, items) {
                 data-model-type="${modelTypeApi || ''}"
                 data-creator="${creator}"
                 data-model-name="${modelName}"
-                ${!versionId ? 'disabled title="Version ID missing, cannot pre-fill"' : 'title="Pre-fill Download Tab"'} >
+                title="${!versionId ? 'Download latest version' : 'Pre-fill Download Tab'}" >
           <span class="base-model-badge">${baseModel}</span> ${versionName} <i class="fas fa-download"></i>
         </button>
       `;
@@ -115,7 +115,7 @@ export function renderSearchResults(ui, items) {
                       data-model-type="${modelTypeApi || ''}"
                       data-creator="${creator}"
                       data-model-name="${modelName}"
-                      ${!versionId ? 'disabled title="Version ID missing, cannot pre-fill"' : 'title="Pre-fill Download Tab"'} >
+                      title="${!versionId ? 'Download latest version' : 'Pre-fill Download Tab'}" >
                 <span class="base-model-badge">${baseModel}</span> ${versionName} <i class="fas fa-download"></i>
               </button>
             `;
