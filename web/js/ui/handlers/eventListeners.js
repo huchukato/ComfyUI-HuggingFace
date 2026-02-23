@@ -191,8 +191,8 @@ export function setupEventListeners(ui) {
         if (downloadButton) {
             event.preventDefault();
             const { modelId, versionId, modelType, creator, modelName } = downloadButton.dataset;
-            if (!modelId || !versionId) {
-                ui.showToast("Error: Missing data for download.", "error");
+            if (!modelId) {
+                ui.showToast("Error: Missing model ID for download.", "error");
                 return;
             }
             const modelTypeInternalKey = Object.keys(ui.modelTypes).find(key => ui.modelTypes[key]?.toLowerCase() === modelType?.toLowerCase()) || ui.settings.defaultModelType;
