@@ -6,6 +6,8 @@
 [![HuggingFace](https://img.shields.io/badge/HuggingFace-Integrated-yellow.svg)](https://huggingface.co)
 [![Italian](https://img.shields.io/badge/Italian-🇮🇹-red.svg)](README_IT.md)
 
+[![buy-me-coffees](https://i.imgur.com/3MDbAtw.png)](https://buymeacoffee.com/huchukato)
+
 ComfyUI-HuggingFace integra perfettamente l'enorme repository di modelli HuggingFace direttamente in ComfyUI, permettendoti di cercare, scaricare e organizzare modelli AI senza lasciare il tuo workflow.
 
 ![ComfyUI-HuggingFace](https://github.com/user-attachments/assets/3867b704-1b14-4c02-87d4-fc2a61deeb42)
