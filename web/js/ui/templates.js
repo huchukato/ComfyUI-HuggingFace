@@ -53,8 +53,8 @@ export function modalTemplate(settings = {}) {
               </div>
               <div class="huggingface-form-group">
                 <label for="huggingface-connections">Connections</label>
-                <input type="number" id="huggingface-connections" class="huggingface-input" value="${numConnections}" min="1" max="16" step="1" required disabled>
-                <p style="font-size: 0.9em; color: #ccc; margin-top: 7px; margin-bottom: 15px;">Disabled: Only single connection possible for now</p>
+                <input type="number" id="huggingface-connections" class="huggingface-input" value="${numConnections}" min="1" max="16" step="1" required>
+                <p style="font-size: 0.9em; color: #ccc; margin-top: 7px; margin-bottom: 15px;">Number of parallel connections for this download (1-16)</p>
               </div>
             </div>
             <div class="huggingface-form-group inline">

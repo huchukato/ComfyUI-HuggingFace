@@ -242,7 +242,7 @@ export class HuggingFaceDownloaderUI {
         if (tabId === 'status') this.updateStatus();
         else if (tabId === 'settings') this.applySettings();
         else if(tabId === 'download') {
-            this.downloadConnectionsInput.value = this.settings.numConnections;
+            this.downloadConnectionsInput.value = this.settings.numConnections || 4;
             if (Object.keys(this.modelTypes).length > 0) {
                 this.downloadModelTypeSelect.value = this.settings.defaultModelType;
             }

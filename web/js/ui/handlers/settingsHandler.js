@@ -6,7 +6,7 @@ const SETTINGS_COOKIE_NAME = 'huggingfaceDownloaderSettings';
 export function getDefaultSettings() {
     return {
         apiKey: '',
-        numConnections: 1,
+        numConnections: 4,
         defaultModelType: 'checkpoints',
         autoOpenStatusTab: true,
         searchResultLimit: 20,
@@ -52,7 +52,7 @@ export function applySettings(ui) {
         ui.settingsApiKeyInput.value = ui.settings.apiKey || '';
     }
     if (ui.settingsConnectionsInput) {
-        ui.settingsConnectionsInput.value = Math.max(1, Math.min(16, ui.settings.numConnections || 1));
+        ui.settingsConnectionsInput.value = Math.max(1, Math.min(16, ui.settings.numConnections || 4));
     }
     if (ui.settingsDefaultTypeSelect) {
         const desired = ui.settings.defaultModelType || 'checkpoints';
@@ -73,7 +73,7 @@ export function applySettings(ui) {
         ui.settingsNsfwThresholdInput.value = Number.isFinite(val) ? val : 4;
     }
     if (ui.downloadConnectionsInput) {
-        ui.downloadConnectionsInput.value = Math.max(1, Math.min(16, ui.settings.numConnections || 1));
+        ui.downloadConnectionsInput.value = Math.max(1, Math.min(16, ui.settings.numConnections || 4));
     }
     if (ui.downloadModelTypeSelect && Object.keys(ui.modelTypes).length > 0) {
         const desired = ui.settings.defaultModelType || 'checkpoints';
