@@ -84,22 +84,42 @@ def get_model_dir(model_type: str, explicit_save_root: str = "", selected_subdir
             if normalized_type in ["checkpoints", "loras", "vae", "embeddings", "hypernetworks", "controlnet", "upscale_models"]:
                 return folder_paths.get_folder_paths(normalized_type)[0]
             elif normalized_type in ["diffusion_models", "motion_models", "unet", "diffusers"]:
-                # These might not be standard ComfyUI types, try to get them
+                # ComfyUI may alias diffusion_models -> unet (or vice versa) in
+                # folder_paths, returning the wrong physical folder. Prefer the
+                # folder that actually matches the requested type name.
+                expected_folder_name = normalized_type
+                models_dir = os.path.join(folder_paths.base_path, "models")
+                physical_dir = os.path.join(models_dir, expected_folder_name)
+
+                # If the physical folder exists, use it directly
+                if os.path.isdir(physical_dir):
+                    return physical_dir
+
+                # Otherwise try folder_paths, but verify the returned path
+                # actually contains the expected folder name (not an alias)
                 try:
                     paths = folder_paths.get_folder_paths(normalized_type)
                     if paths:
-                        return paths[0]
-                    raise IndexError("empty path list")
+                        candidate = os.path.abspath(paths[0])
+                        candidate_name = os.path.basename(candidate)
+                        if candidate_name == expected_folder_name:
+                            return candidate
+                        # folder_paths returned an alias (e.g. unet for
+                        # diffusion_models). Create the correct folder instead.
+                        print(f"[HuggingFace] folder_paths returned '{candidate}' for "
+                              f"'{normalized_type}' (expected '{expected_folder_name}'). "
+                              f"Creating dedicated folder.")
                 except Exception:
-                    # Fallback: create a folder named after the normalized type
-                    # under the ComfyUI base path, instead of redirecting to a
-                    # different model type (e.g. diffusion_models -> unet).
-                    fallback_dir = os.path.join(folder_paths.base_path, normalized_type)
-                    try:
-                        os.makedirs(fallback_dir, exist_ok=True)
-                    except Exception as mke:
-                        print(f"[HuggingFace] Warning: could not create '{fallback_dir}': {mke}")
-                    return fallback_dir
+                    pass
+
+                # Fallback: create a folder named after the normalized type
+                # under the ComfyUI models directory.
+                fallback_dir = physical_dir
+                try:
+                    os.makedirs(fallback_dir, exist_ok=True)
+                except Exception as mke:
+                    print(f"[HuggingFace] Warning: could not create '{fallback_dir}': {mke}")
+                return fallback_dir
             else:
                 # For other types, use our extension directory instead of custom_nodes
                 from ..config import PLUGIN_ROOT
