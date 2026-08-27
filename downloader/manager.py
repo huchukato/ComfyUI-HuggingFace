@@ -852,7 +852,7 @@ class DownloadManager:
                  known_types = [
                      "checkpoints", "loras", "vae", "embeddings", "hypernetworks",
                      "controlnet", "upscale_models", "clip_vision", "gligen", "configs",
-                     "unet", "diffusers", "motion_models", "poses", "wildcards"
+                     "unet", "diffusers", "diffusion_models", "motion_models", "poses", "wildcards"
                  ]
                  known_dirs = [os.path.abspath(get_directory_by_type(t)) for t in known_types if get_directory_by_type(t)]
                  # Also allow output and input directories
