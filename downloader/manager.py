@@ -5,7 +5,8 @@ import threading
 import time
 import datetime
 import os
-import json                     
+import json
+import shutil
 import requests
 import subprocess
 import platform
@@ -594,7 +595,6 @@ class DownloadManager:
     # --- _download_file_wrapper remains the same ---
     def _download_file_wrapper(self, download_info: Dict[str, Any]):
         """Wraps the download execution, handles status updates, exceptions, and metadata saving."""
-        # ... (no changes needed here) ...
         download_id = download_info["id"]
         filename = download_info.get('filename', download_id)
         from .chunk_downloader import ChunkDownloader
@@ -605,52 +605,133 @@ class DownloadManager:
 
         try:
             print(f"[Downloader Wrapper {download_id}] Preparing download for '{filename}'.")
-            
-            # Handle case where url is None (repo downloads)
+
             url = download_info["url"]
-            if url is None:
-                print(f"[Downloader Wrapper {download_id}] URL is None, using huggingface_hub")
-                # For repo downloads or single files, use huggingface_hub
+            output_path = download_info["output_path"]
+            api_key = download_info.get("api_key")
+
+            # --- Parse HuggingFace URLs and use hf_hub_download with hf_transfer ---
+            # HuggingFace resolve URLs look like:
+            #   https://huggingface.co/{repo_id}/resolve/{revision}/{filename}
+            hf_url = url if url else download_info.get("model_url_or_id", "")
+            use_hf_hub = False
+            hf_repo_id = None
+            hf_filename = None
+            hf_revision = None
+
+            if hf_url and "huggingface.co/" in hf_url:
+                # Normalize: strip query params
+                clean_url = hf_url.split("?")[0].rstrip("/")
+                after_domain = clean_url.split("huggingface.co/", 1)[1]
+                parts = after_domain.split("/")
+                # Expected: {org}/{repo}/resolve/{revision}/{path/to/file}
+                # or {org}/{repo}/blob/{revision}/{path/to/file}
+                if len(parts) >= 4 and parts[2] in ("resolve", "blob"):
+                    hf_repo_id = f"{parts[0]}/{parts[1]}"
+                    hf_revision = parts[3]
+                    hf_filename = "/".join(parts[4:])
+                    use_hf_hub = True
+                elif len(parts) >= 2 and parts[2] not in ("resolve", "blob", "tree", "discuss", "pull"):
+                    # Might be {org}/{repo}/{revision}/{file} without resolve
+                    # Be conservative: only treat as HF download if we have at least org/repo
+                    hf_repo_id = f"{parts[0]}/{parts[1]}"
+                    if len(parts) >= 3:
+                        hf_revision = parts[2]
+                    hf_filename = "/".join(parts[3:]) if len(parts) > 3 else None
+                    if hf_filename:
+                        use_hf_hub = True
+
+            if use_hf_hub:
+                # --- Use huggingface_hub with hf_transfer for maximum speed ---
+                print(f"[Downloader Wrapper {download_id}] Using hf_hub_download (hf_transfer) for {hf_repo_id}/{hf_filename} (rev={hf_revision or 'main'})")
+
+                # Ensure hf_transfer is enabled
+                os.environ.setdefault("HF_HUB_ENABLE_HF_TRANSFER", "1")
+
+                from huggingface_hub import hf_hub_download
+
+                # Determine the local directory and subdirectory structure
+                # hf_hub_download with local_dir puts files under local_dir/./{filename}
+                # We want the file at output_path exactly
+                output_dir = os.path.dirname(output_path)
+                output_name = os.path.basename(output_path)
+
+                self._update_download_status(download_id, status="downloading", connection_type="hf-transfer")
+
+                result = hf_hub_download(
+                    repo_id=hf_repo_id,
+                    filename=hf_filename,
+                    revision=hf_revision,
+                    local_dir=output_dir,
+                    token=api_key,
+                    force_download=True,
+                )
+
+                # hf_hub_download may save to a different path (e.g. with subfolder structure)
+                # Move/rename if needed
+                if result and os.path.exists(result):
+                    if os.path.abspath(result) != os.path.abspath(output_path):
+                        # Ensure parent dir exists
+                        os.makedirs(os.path.dirname(output_path), exist_ok=True)
+                        shutil.move(result, output_path)
+                        # Clean up any empty intermediate dirs
+                        try:
+                            remaining = os.path.relpath(result, output_dir)
+                            # Remove empty dirs left behind
+                            check_dir = output_dir
+                            for part in remaining.split(os.sep)[:-1]:
+                                check_dir = os.path.join(check_dir, part)
+                                try:
+                                    if os.path.isdir(check_dir) and not os.listdir(check_dir):
+                                        os.rmdir(check_dir)
+                                except:
+                                    pass
+                        except:
+                            pass
+                    success = True
+                    final_status = "completed"
+                    print(f"[Downloader Wrapper {download_id}] hf_hub_download completed: {output_path}")
+                else:
+                    raise Exception("hf_hub_download returned no path")
+
+            elif url is None:
+                # --- Repo download (no specific file) ---
+                print(f"[Downloader Wrapper {download_id}] URL is None, using huggingface_hub snapshot_download")
+
+                os.environ.setdefault("HF_HUB_ENABLE_HF_TRANSFER", "1")
+
                 from huggingface_hub import snapshot_download, hf_hub_download
-                
-                # Extract just the repo_id from model_url_or_id (remove URL part)
+
                 model_url_or_id = download_info["model_url_or_id"]
                 if model_url_or_id.startswith("https://huggingface.co/"):
-                    # Extract repo_id and filename from URL
                     parts = model_url_or_id.replace("https://huggingface.co/", "").split("/")
-                    model_id = f"{parts[0]}/{parts[1]}"  # Get "Kijai/WanVideo_comfy"
-                    
-                    # Check if it's a specific file or entire repo
+                    model_id = f"{parts[0]}/{parts[1]}"
+
                     if len(parts) >= 4 and parts[2] == "resolve":
-                        # It's a specific file: /resolve/commit/path/to/file
-                        filename = "/".join(parts[4:])  # Get the file path after /resolve/commit/
+                        filename = "/".join(parts[4:])
                         print(f"[Downloader Wrapper {download_id}] Downloading single file {filename} from repo {model_id}")
-                        
-                        # Use hf_hub_download for single file
                         result = hf_hub_download(
                             repo_id=model_id,
                             filename=filename,
                             local_dir=download_info["output_path"],
-                            token=download_info.get("api_key")
+                            token=api_key
                         )
                     else:
-                        # It's an entire repo download
                         print(f"[Downloader Wrapper {download_id}] Downloading entire repo {model_id}")
                         result = snapshot_download(
                             repo_id=model_id,
                             local_dir=download_info["output_path"],
-                            token=download_info.get("api_key")
+                            token=api_key
                         )
                 else:
-                    # Plain repo_id - assume entire repo download
                     model_id = model_url_or_id
                     print(f"[Downloader Wrapper {download_id}] Downloading entire repo {model_id}")
                     result = snapshot_download(
                         repo_id=model_id,
                         local_dir=download_info["output_path"],
-                        token=download_info.get("api_key")
+                        token=api_key
                     )
-                
+
                 if result:
                     success = True
                     final_status = "completed"
@@ -658,14 +739,15 @@ class DownloadManager:
                 else:
                     raise Exception("snapshot_download failed")
             else:
-                # Normal file download
+                # --- Non-HF URL: use ChunkDownloader as fallback ---
+                print(f"[Downloader Wrapper {download_id}] Non-HF URL, using ChunkDownloader for {url}")
                 downloader = ChunkDownloader(
                     url=url,
                     output_path=download_info["output_path"],
                     num_connections=download_info.get("num_connections", DEFAULT_CONNECTIONS),
                     manager=self,
                     download_id=download_id,
-                    api_key=download_info.get("api_key"),
+                    api_key=api_key,
                     known_size=download_info.get("known_size")
                 )
 
@@ -675,17 +757,17 @@ class DownloadManager:
                        self._update_download_status(download_id, status="cancelled", error="Cancelled before start")
                        return
 
-                  # Only set downloader_instance for file downloads
-                  if url is not None:
+                  # Only set downloader_instance for file downloads (ChunkDownloader)
+                  if url is not None and downloader is not None:
                       self.active_downloads[download_id]["downloader_instance"] = downloader
 
             self._update_download_status(download_id, status="downloading")
             print(f"[Downloader Wrapper {download_id}] Starting download process for '{filename}'.")
-            
-            # For repo downloads, success is already determined
-            if url is None:
-                # Repo download already completed above
-                print(f"[Downloader Wrapper {download_id}] Repo download already completed")
+
+            # For repo downloads or hf_hub downloads, success is already determined
+            if url is None or use_hf_hub:
+                # Download already completed above
+                print(f"[Downloader Wrapper {download_id}] Download already completed")
             else:
                 # File download - use ChunkDownloader
                 success = downloader.download() # Blocking call
@@ -700,13 +782,13 @@ class DownloadManager:
                 except Exception as meta_err:
                      print(f"[Downloader Wrapper {download_id}] Error during post-download metadata/preview saving: {meta_err}")
 
-            elif downloader.is_cancelled:
+            elif downloader and downloader.is_cancelled:
                 final_status = "cancelled"
                 error_msg = downloader.error or "Download cancelled"
                 print(f"[Downloader Wrapper {download_id}] Download cancelled for '{filename}'. Reason: {error_msg}")
             else:
                 final_status = "failed"
-                error_msg = downloader.error or "Download failed with unknown error"
+                error_msg = downloader.error if downloader else (error_msg or "Download failed with unknown error")
                 print(f"[Downloader Wrapper {download_id}] Download failed for '{filename}'. Error: {error_msg}")
 
         except Exception as e:
@@ -730,6 +812,9 @@ class DownloadManager:
                       final_progress_percent = (downloader.downloaded / downloader.total_size * 100)
                  if final_status == "completed": final_progress_percent = 100.0
                  final_progress_percent = min(100.0, max(0.0, final_progress_percent))
+            elif final_status == "completed":
+                 final_progress_percent = 100.0
+                 conn_type = "hf-transfer"
 
             print(f"[Downloader Wrapper {download_id}] Finalizing status: {final_status}, Error: {error_msg}")
             self._update_download_status(
