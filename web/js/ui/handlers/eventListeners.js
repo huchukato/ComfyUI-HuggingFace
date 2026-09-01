@@ -113,39 +113,45 @@ export function setupEventListeners(ui) {
 
     // Search results actions
     ui.searchResultsContainer.addEventListener('click', (event) => {
-        const downloadButton = event.target.closest('.huggingface-search-download-button');
-        if (downloadButton) {
-            event.preventDefault();
-            const { modelId, versionId, modelType, creator, modelName } = downloadButton.dataset;
-            if (!modelId) {
-                ui.showToast("Error: Missing model ID for download.", "error");
-                return;
-            }
-            const modelTypeInternalKey = Object.keys(ui.modelTypes).find(key => ui.modelTypes[key]?.toLowerCase() === modelType?.toLowerCase()) || ui.settings.defaultModelType;
-
-            ui.modelUrlInput.value = modelId;
-            ui.modelVersionIdInput.value = versionId;
-            ui.customFilenameInput.value = modelName ? `${modelName.replace(/[^a-zA-Z0-9_-]/g, '_')}` : '';
-            ui.forceRedownloadCheckbox.checked = false;
-            ui.downloadModelTypeSelect.value = modelTypeInternalKey;
-
-            ui.switchTab('download');
-            ui.showToast(`Filled download form for "${modelName || modelId}" by ${creator || 'Unknown'}.`, 'info', 4000);
-            ui.fetchAndDisplayDownloadPreview();
+        const browseButton = event.target.closest('.huggingface-search-browse-button');
+        if (browseButton) {
+            const repoId = browseButton.dataset.repoId;
+            if (repoId) ui.openRepoBrowser(repoId);
             return;
         }
 
-        const viewAllButton = event.target.closest('.show-all-versions-button');
-        if (viewAllButton) {
-            const modelId = viewAllButton.dataset.modelId;
-            const versionsContainer = ui.searchResultsContainer.querySelector(`#all-versions-${modelId}`);
-            if (versionsContainer) {
-                const currentlyVisible = versionsContainer.style.display !== 'none';
-                versionsContainer.style.display = currentlyVisible ? 'none' : 'flex';
-                viewAllButton.innerHTML = currentlyVisible
-                    ? `All versions (${viewAllButton.dataset.totalVersions}) <i class="fas fa-chevron-down"></i>`
-                    : `Show less <i class="fas fa-chevron-up"></i>`;
-            }
+        const downloadRepoButton = event.target.closest('.huggingface-search-download-repo-button');
+        if (downloadRepoButton) {
+            const repoId = downloadRepoButton.dataset.repoId;
+            if (!repoId) return;
+            (async () => {
+                downloadRepoButton.disabled = true;
+                downloadRepoButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Queueing...';
+                try {
+                    await ui.autoSelectModelTypeFromHuggingFace('diffusers');
+                    const result = await HuggingFaceDownloaderAPI.downloadModel({
+                        model_url_or_id: repoId,
+                        model_type: ui.downloadModelTypeSelect.value,
+                        subdir: ui.subdirSelect?.value || '',
+                        save_root: ui.settings.globalRoot || '',
+                        num_connections: 1,
+                        force_redownload: false,
+                        api_key: ui.settings.apiKey,
+                    });
+                    if (result && result.download_id) {
+                        ui.switchTab('status');
+                        ui.showToast(`Snapshot download queued: ${result.filename || repoId}`, 'success');
+                    } else {
+                        throw new Error(result?.error || 'No download_id returned');
+                    }
+                } catch (error) {
+                    ui.showToast(`Failed to queue repo download: ${error.details || error.message}`, 'error');
+                } finally {
+                    downloadRepoButton.disabled = false;
+                    downloadRepoButton.innerHTML = 'Repo <i class="fas fa-box"></i>';
+                }
+            })();
+            return;
         }
     });
 

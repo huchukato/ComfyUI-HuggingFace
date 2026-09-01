@@ -57,6 +57,14 @@ export class HuggingFaceDownloaderAPI {
     });
   }
 
+  static async getRepoTree(params) {
+    return await this._request("/huggingface/repo_tree", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(params),
+    });
+  }
+
   static async getStatus() {
     return await this._request("/huggingface/status");
   }

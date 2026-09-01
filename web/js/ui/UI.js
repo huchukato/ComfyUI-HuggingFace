@@ -15,6 +15,7 @@ import {
 } from "./handlers/settingsHandler.js";
 import { startStatusUpdates, stopStatusUpdates, updateStatus, handleCancelDownload, handleRetryDownload, handleOpenPath, handleClearHistory } from "./handlers/statusHandler.js";
 import { renderSearchResults } from "./searchRenderer.js";
+import { openRepoBrowser } from "./repoTreeRenderer.js";
 import { renderDownloadList } from "./statusRenderer.js";
 import { renderDownloadPreview } from "./previewRenderer.js";
 import { modalTemplate } from "./templates.js";
@@ -301,6 +302,7 @@ export class HuggingFaceDownloaderUI {
     // --- Rendering (delegated to external renderers) ---
     renderDownloadList = (items, container, emptyMessage) => renderDownloadList(this, items, container, emptyMessage);
     renderSearchResults = (items) => renderSearchResults(this, items);
+    openRepoBrowser = (repoId) => openRepoBrowser(this, repoId);
     renderDownloadPreview = (data) => renderDownloadPreview(this, data);
     
     // --- Auto-select model type based on HuggingFace model type ---

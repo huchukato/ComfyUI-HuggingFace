@@ -488,27 +488,6 @@
     flex-shrink: 0;
 }
 
-.version-buttons-container {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end; 
-    gap: 5px;
-}
-
-.all-versions-container {
-    display: flex;
-    flex-direction: column; 
-    gap: 5px;
-    padding-bottom: 5px;
-    white-space: nowrap; /* Prevent wrapping */
-    max-width: 100%; /* Prevent excessive width */
-    align-items: flex-end; 
-}
-
-.show-all-versions-button {
-    align-self: flex-end; /* Align button to left */
-    margin-top: auto; /* Push to the bottom */
-}
 .base-model-badge {
     display: inline-block; /* Allows padding and background */
     background-color: #3a3a3a;  /* Or a specific purple hex code like #800080 */
@@ -725,4 +704,140 @@
     bottom: 5px;
     right: 5px;
     /* ... */
+}
+
+/* ================================================
+   Repo file browser modal (Search -> Browse files)
+   ================================================ */
+.huggingface-repo-tree-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100000;
+}
+
+.huggingface-repo-tree-modal-content {
+    background: var(--bg-color, #2b2b2b);
+    color: var(--input-text, #ddd);
+    border: 1px solid var(--border-color, #444);
+    border-radius: 8px;
+    width: min(720px, 92vw);
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+}
+
+.huggingface-repo-tree-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border-color, #444);
+    gap: 10px;
+}
+
+.huggingface-repo-tree-header h4 {
+    margin: 0;
+    font-size: 1rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.huggingface-repo-tree-actions {
+    display: flex;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.huggingface-repo-tree-breadcrumb {
+    padding: 8px 16px;
+    border-bottom: 1px solid var(--border-color, #444);
+    font-size: 0.85rem;
+    overflow-x: auto;
+    white-space: nowrap;
+}
+
+.huggingface-repo-tree-breadcrumb button {
+    background: none;
+    border: none;
+    color: var(--link-color, #6ab4ff);
+    cursor: pointer;
+    padding: 0 2px;
+    font-size: inherit;
+}
+
+.huggingface-repo-tree-breadcrumb button:hover {
+    text-decoration: underline;
+}
+
+.huggingface-repo-tree-content {
+    padding: 8px 16px 16px;
+    overflow-y: auto;
+    flex: 1;
+}
+
+.huggingface-repo-tree-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.huggingface-repo-tree-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 8px;
+    border-radius: 4px;
+    font-size: 0.9rem;
+}
+
+.huggingface-repo-tree-row + .huggingface-repo-tree-row {
+    border-top: 1px solid rgba(255,255,255,0.04);
+}
+
+.huggingface-repo-tree-row.directory {
+    cursor: pointer;
+}
+
+.huggingface-repo-tree-row.directory:hover {
+    background: rgba(255,255,255,0.05);
+}
+
+.huggingface-repo-tree-icon {
+    width: 18px;
+    text-align: center;
+    color: var(--input-text, #ddd);
+    flex-shrink: 0;
+}
+
+.huggingface-repo-tree-row.directory .huggingface-repo-tree-icon {
+    color: #f0c040;
+}
+
+.huggingface-repo-tree-label {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.huggingface-repo-tree-size {
+    color: var(--descrip-text, #999);
+    font-size: 0.8rem;
+    flex-shrink: 0;
+    min-width: 70px;
+    text-align: right;
+}
+
+.huggingface-repo-tree-row-actions {
+    flex-shrink: 0;
+}
+
+.huggingface-button.tiny {
+    padding: 2px 8px;
+    font-size: 0.75rem;
 }

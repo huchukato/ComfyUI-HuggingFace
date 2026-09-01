@@ -99,7 +99,10 @@ async def route_download_model(request):
         save_path = os.path.join(target_dir, final_filename)
 
         # Check if file exists
-        if os.path.exists(save_path) and not force_redownload:
+        # For snapshot/repo downloads (no specific file), the target is a
+        # directory: allow resume instead of blocking when it already exists.
+        is_snapshot_download = target_filename is None
+        if os.path.exists(save_path) and not force_redownload and not is_snapshot_download:
             raise web.HTTPBadRequest(reason=f"File already exists: {final_filename}")
 
         # Start download

@@ -28,26 +28,17 @@ export function renderSearchResults(ui, items) {
     // Extract base repository ID from full path (remove /tree/main, /blob/main, etc.)
     const baseRepoId = modelId.split('/tree/')[0].split('/blob/')[0].split('/raw/')[0];
 
-    const creator = hit.user?.username || 'Unknown Creator';
-    const modelName = hit.name || 'Untitled Model';
+    // HuggingFace search results do not expose a `user` object like CivitAI;
+    // derive the creator from the repo id (org/user part).
+    const creator = (hit.user?.username || baseRepoId.split('/')[0] || 'Unknown Creator').trim();
+    const modelName = hit.name || baseRepoId.split('/').pop() || 'Untitled Model';
     const modelTypeApi = hit.type || 'other';
-    console.log('Model type for badge:', modelTypeApi);
     const stats = hit.metrics || {};
-    const tags = hit.tags?.map(t => t.name) || [];
+    const tags = hit.tags?.map(t => (typeof t === 'string' ? t : t.name)).filter(Boolean) || [];
 
     const thumbnailUrl = hit.thumbnailUrl || placeholder;
     const firstImage = Array.isArray(hit.images) && hit.images.length > 0 ? hit.images[0] : null;
     const thumbnailType = firstImage?.type;
-
-    const allVersions = hit.versions || [];
-    const primaryVersion = hit.version || (allVersions.length > 0 ? allVersions[0] : {});
-    const primaryVersionId = primaryVersion.id;
-    const primaryBaseModel = primaryVersion.baseModel || 'N/A';
-
-    const uniqueBaseModels = allVersions.length > 0
-      ? [...new Set(allVersions.map(v => v.baseModel).filter(Boolean))]
-      : (primaryBaseModel !== 'N/A' ? [primaryBaseModel] : []);
-    const baseModelsDisplay = uniqueBaseModels.length > 0 ? uniqueBaseModels.join(', ') : 'N/A';
 
     const publishedAt = hit.publishedAt;
     let lastUpdatedFormatted = 'N/A';
@@ -60,69 +51,8 @@ export function renderSearchResults(ui, items) {
 
     const listItem = document.createElement('div');
     listItem.className = 'huggingface-search-item';
-    listItem.dataset.modelId = modelId;
-
-    const MAX_VISIBLE_VERSIONS = 3;
-    let visibleVersions = [];
-    if (primaryVersionId) {
-      visibleVersions.push({ id: primaryVersionId, name: primaryVersion.name || 'Primary Version', baseModel: primaryBaseModel });
-    }
-    allVersions.forEach(v => {
-      if (v.id !== primaryVersionId && visibleVersions.length < MAX_VISIBLE_VERSIONS) visibleVersions.push(v);
-    });
-
-    let versionButtonsHtml = visibleVersions.map(version => {
-      const versionId = version.id;
-      const versionName = version.name || 'Unknown Version';
-      const baseModel = version.baseModel || 'N/A';
-      return `
-        <button class="huggingface-button primary small huggingface-search-download-button"
-                data-model-id="${baseRepoId}"
-                data-version-id="${versionId || ''}"
-                data-model-type="${modelTypeApi || ''}"
-                data-creator="${creator}"
-                data-model-name="${modelName}"
-                title="${!versionId ? 'Download latest version' : 'Pre-fill Download Tab'}" >
-          <span class="base-model-badge">${baseModel}</span> ${versionName} <i class="fas fa-download"></i>
-        </button>
-      `;
-    }).join('');
-
-    const hasMoreVersions = allVersions.length > visibleVersions.length;
-    const totalVersionCount = allVersions.length;
-    const moreButtonHtml = hasMoreVersions ? `
-      <button class="huggingface-button secondary small show-all-versions-button"
-              data-model-id="${modelId}"
-              data-total-versions="${totalVersionCount}"
-              title="Show all ${totalVersionCount} versions">
-        All versions (${totalVersionCount}) <i class="fas fa-chevron-down"></i>
-      </button>
-    ` : '';
-
-    let allVersionsHtml = '';
-    if (hasMoreVersions) {
-      const hiddenVersions = allVersions.filter(v => !visibleVersions.some(vis => vis.id === v.id));
-      allVersionsHtml = `
-        <div class="all-versions-container" id="all-versions-${modelId}" style="display: none;">
-          ${hiddenVersions.map(version => {
-            const versionId = version.id;
-            const versionName = version.name || 'Unknown Version';
-            const baseModel = version.baseModel || 'N/A';
-            return `
-              <button class="huggingface-button primary small huggingface-search-download-button"
-                      data-model-id="${baseRepoId}"
-                      data-version-id="${versionId || ''}"
-                      data-model-type="${modelTypeApi || ''}"
-                      data-creator="${creator}"
-                      data-model-name="${modelName}"
-                      title="${!versionId ? 'Download latest version' : 'Pre-fill Download Tab'}" >
-                <span class="base-model-badge">${baseModel}</span> ${versionName} <i class="fas fa-download"></i>
-              </button>
-            `;
-          }).join('')}
-        </div>
-      `;
-    }
+    listItem.dataset.modelId = baseRepoId;
+    listItem.dataset.repoId = baseRepoId;
 
     let thumbnailHtml = '';
     const videoTitle = `Video preview for ${modelName}`;
@@ -151,33 +81,32 @@ export function renderSearchResults(ui, items) {
         <h4>${modelName}</h4>
         <div class="huggingface-search-meta-info">
           <span title="Creator: ${creator}"><i class="fas fa-user"></i> ${creator}</span>
-          <span title="Base Models: ${baseModelsDisplay}"><i class="fas fa-layer-group"></i> ${baseModelsDisplay}</span>
-          <span title="Published: ${lastUpdatedFormatted}"><i class="fas fa-calendar-alt"></i> ${lastUpdatedFormatted}</span>
-        </div>
-        <div class="huggingface-search-stats" title="Stats: Downloads / Rating (Count) / Likes">
           <span title="Downloads"><i class="fas fa-download"></i> ${stats.downloadCount?.toLocaleString() || 0}</span>
-          <span title="Thumbs"><i class="fas fa-thumbs-up"></i> ${stats.thumbsUpCount?.toLocaleString() || 0}</span>
-          <span title="Collected"><i class="fas fa-archive"></i> ${stats.collectedCount?.toLocaleString() || 0}</span>
-          <span title="Buzz"><i class="fas fa-bolt"></i> ${stats.tippedAmountCount?.toLocaleString() || 0}</span>
+          <span title="Likes"><i class="fas fa-thumbs-up"></i> ${stats.thumbsUpCount?.toLocaleString() || 0}</span>
+          ${lastUpdatedFormatted !== 'N/A' ? `<span title="Published"><i class="fas fa-calendar-alt"></i> ${lastUpdatedFormatted}</span>` : ''}
         </div>
         ${tags.length > 0 ? `
         <div class="huggingface-search-tags" title="${tags.join(', ')}">
-          ${tags.slice(0, 5).map(tag => `<span class="huggingface-search-tag">${tag}</span>`).join('')}
-          ${tags.length > 5 ? `<span class="huggingface-search-tag">...</span>` : ''}
+          ${tags.slice(0, 6).map(tag => `<span class="huggingface-search-tag">${tag}</span>`).join('')}
+          ${tags.length > 6 ? `<span class="huggingface-search-tag">...</span>` : ''}
         </div>
         ` : ''}
       </div>
       <div class="huggingface-search-actions">
-        <a href="https://huggingface.co/${baseRepoId}${primaryVersionId ? '?modelVersionId='+primaryVersionId : ''}" 
-           target="_blank" rel="noopener noreferrer" class="huggingface-button small" 
-           title="Open on HuggingFace website">
+        <a href="https://huggingface.co/${baseRepoId}" target="_blank" rel="noopener noreferrer"
+           class="huggingface-button small" title="Open on HuggingFace website">
           View <i class="fas fa-external-link-alt"></i>
         </a>
-        <div class="version-buttons-container">
-          ${versionButtonsHtml}
-          ${moreButtonHtml}
-        </div>
-        ${allVersionsHtml}
+        <button class="huggingface-button primary small huggingface-search-browse-button"
+                data-repo-id="${baseRepoId}"
+                title="Browse files and folders in this repository">
+          Browse <i class="fas fa-folder-tree"></i>
+        </button>
+        <button class="huggingface-button secondary small huggingface-search-download-repo-button"
+                data-repo-id="${baseRepoId}"
+                title="Download the entire repository (snapshot_download)">
+          Repo <i class="fas fa-box"></i>
+        </button>
       </div>
     `;
 

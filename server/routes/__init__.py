@@ -15,6 +15,7 @@ from . import GetModelTypes
 from . import GetModelDirs
 from . import GetStatus
 from . import OpenPath
+from . import RepoTree
 from . import RetryDownload
 from . import SearchModels
 

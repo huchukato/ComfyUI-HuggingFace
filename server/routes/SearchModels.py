@@ -81,21 +81,42 @@ async def route_search_models(request):
             # Format results for frontend
             formatted_models = []
             for model in models:
+                tags = model.tags or []
+                # Derive a coarse model type from pipeline_tag / tags for the badge
+                pipeline_tag = getattr(model, "pipeline_tag", None) or ""
+                if pipeline_tag:
+                    model_type_label = pipeline_tag
+                elif any(t.startswith("diffusers") for t in tags):
+                    model_type_label = "diffusers"
+                elif "safetensors" in tags:
+                    model_type_label = "safetensors"
+                else:
+                    model_type_label = "model"
+
                 formatted_model = {
                     "id": model.id,
                     "name": model.id.split('/')[-1],
-                    "description": model.tags or "",
-                    "creator": {"username": model.author or ""},
+                    "description": ", ".join(tags) if tags else "",
+                    "user": {"username": model.author or model.id.split('/')[0]},
+                    "creator": {"username": model.author or model.id.split('/')[0]},
                     "modelId": model.id,
                     "downloads": model.downloads or 0,
                     "likes": model.likes or 0,
-                    "tags": model.tags or [],
-                    "modelType": "Unknown",  # Will be determined by frontend
-                    "baseModel": [],  # Will be determined by frontend
+                    "tags": tags,
+                    "type": model_type_label,
+                    "publishedAt": getattr(model, "lastModified", None),
+                    "thumbnailUrl": None,
+                    "images": [],
+                    "metrics": {
+                        "downloadCount": model.downloads or 0,
+                        "thumbsUpCount": model.likes or 0,
+                        "collectedCount": 0,
+                        "tippedAmountCount": 0,
+                    },
                     "stats": {
                         "downloadCount": model.downloads or 0,
-                        "thumbsUpCount": model.likes or 0
-                    }
+                        "thumbsUpCount": model.likes or 0,
+                    },
                 }
                 formatted_models.append(formatted_model)
             
