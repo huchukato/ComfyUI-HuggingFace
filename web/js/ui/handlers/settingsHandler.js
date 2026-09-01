@@ -8,10 +8,7 @@ export function getDefaultSettings() {
         apiKey: '',
         numConnections: 4,
         defaultModelType: 'checkpoints',
-        autoOpenStatusTab: true,
         searchResultLimit: 20,
-        hideMatureInSearch: true,
-        nsfwBlurMinLevel: 4, // Blur thumbnails with nsfwLevel >= this value
     };
 }
 
@@ -61,16 +58,6 @@ export function applySettings(ui) {
             const first = ui.settingsDefaultTypeSelect.querySelector('option');
             if (first) ui.settingsDefaultTypeSelect.value = first.value;
         }
-    }
-    if (ui.settingsAutoOpenCheckbox) {
-        ui.settingsAutoOpenCheckbox.checked = ui.settings.autoOpenStatusTab === true;
-    }
-    if (ui.settingsHideMatureCheckbox) {
-        ui.settingsHideMatureCheckbox.checked = ui.settings.hideMatureInSearch === true;
-    }
-    if (ui.settingsNsfwThresholdInput) {
-        const val = Number(ui.settings.nsfwBlurMinLevel);
-        ui.settingsNsfwThresholdInput.value = Number.isFinite(val) ? val : 4;
     }
     if (ui.downloadConnectionsInput) {
         ui.downloadConnectionsInput.value = Math.max(1, Math.min(16, ui.settings.numConnections || 4));
@@ -135,9 +122,6 @@ export function handleSettingsSave(ui) {
     const apiKey = ui.settingsApiKeyInput.value.trim();
     const numConnections = parseInt(ui.settingsConnectionsInput.value, 10);
     const defaultModelType = ui.settingsDefaultTypeSelect.value;
-    const autoOpenStatusTab = ui.settingsAutoOpenCheckbox.checked;
-    const hideMatureInSearch = ui.settingsHideMatureCheckbox.checked;
-    const nsfwBlurMinLevel = Number(ui.settingsNsfwThresholdInput.value);
 
     if (isNaN(numConnections) || numConnections < 1 || numConnections > 16) {
         ui.showToast("Invalid Default Connections (must be 1-16).", "error");
@@ -151,9 +135,6 @@ export function handleSettingsSave(ui) {
     ui.settings.apiKey = apiKey;
     ui.settings.numConnections = numConnections;
     ui.settings.defaultModelType = defaultModelType;
-    ui.settings.autoOpenStatusTab = autoOpenStatusTab;
-    ui.settings.hideMatureInSearch = hideMatureInSearch;
-    ui.settings.nsfwBlurMinLevel = (Number.isFinite(nsfwBlurMinLevel) && nsfwBlurMinLevel >= 0) ? Math.min(128, Math.round(nsfwBlurMinLevel)) : 4;
 
     ui.saveSettingsToCookie();
     ui.applySettings();

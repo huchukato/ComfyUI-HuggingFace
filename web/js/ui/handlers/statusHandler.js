@@ -86,8 +86,7 @@ export async function handleRetryDownload(ui, downloadId, button) {
         const result = await HuggingFaceDownloaderAPI.retryDownload(downloadId);
         if (result.success) {
             ui.showToast(result.message || `Retry queued successfully!`, 'success');
-            if (ui.settings.autoOpenStatusTab) ui.switchTab('status');
-            else ui.updateStatus();
+            ui.switchTab('status');
         } else {
             ui.showToast(`Retry failed: ${result.details || result.error}`, 'error', 5000);
             button.disabled = false;

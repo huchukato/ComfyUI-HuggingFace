@@ -84,11 +84,7 @@ export async function handleDownloadSubmit(ui) {
 
         if (result.status === 'queued') {
             ui.showToast(`Download queued: ${result.details?.filename || 'Model'}`, 'success');
-            if (ui.settings.autoOpenStatusTab) {
-                ui.switchTab('status');
-            } else {
-                ui.updateStatus();
-            }
+            ui.switchTab('status');
         } else if (result.status === 'exists' || result.status === 'exists_size_mismatch') {
             ui.showToast(`${result.message}`, 'info', 4000);
         } else {

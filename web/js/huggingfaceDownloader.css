@@ -718,31 +718,6 @@
     border-radius: 4px; /* Match styling */
 }
 
-/* Blur/Hide for R-rated thumbnails */
-.huggingface-thumbnail-container.blurred img.huggingface-search-thumbnail,
-.huggingface-thumbnail-container.blurred video.huggingface-search-thumbnail,
-.huggingface-thumbnail-container.blurred img.huggingface-download-thumbnail,
-.huggingface-thumbnail-container.blurred video.huggingface-download-thumbnail {
-    filter: blur(14px) brightness(0.6) saturate(0.6);
-    pointer-events: none; /* Let clicks hit the container */
-}
-.huggingface-thumbnail-container .huggingface-nsfw-overlay {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #fff;
-    font-weight: 800;
-    font-size: 20px;
-    letter-spacing: 1px;
-    background: rgba(0,0,0,0.35);
-    z-index: 3;
-    user-select: none;
-}
-/* Make it obvious it’s clickable */
-.huggingface-thumbnail-container.blurred { cursor: pointer; }
-
 /* Style for the type badge (likely exists) */
 .huggingface-type-badge {
     /* ... existing styles ... */

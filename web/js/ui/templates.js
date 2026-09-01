@@ -151,25 +151,6 @@ export function modalTemplate(settings = {}) {
                   <select id="huggingface-settings-default-type" class="huggingface-select" required></select>
                 </div>
               </div>
-              <div class="huggingface-settings-section">
-                <h4>Interface & Search</h4>
-                <div class="huggingface-form-group inline">
-                  <input type="checkbox" id="huggingface-settings-auto-open-status" class="huggingface-checkbox">
-                  <label for="huggingface-settings-auto-open-status">Switch to Status tab after starting download</label>
-                </div>
-                <div class="huggingface-form-group inline">
-                  <input type="checkbox" id="huggingface-settings-hide-mature" class="huggingface-checkbox" ${settings.hideMatureInSearch ? 'checked' : ''}>
-                  <label for="huggingface-settings-hide-mature">Hide R-rated (Mature) images in search (click to reveal)</label>
-                </div>
-                <div class="huggingface-form-group">
-                  <label for="huggingface-settings-nsfw-threshold">NSFW Blur Threshold (nsfwLevel)</label>
-                  <input type="number" id="huggingface-settings-nsfw-threshold" class="huggingface-input" value="${Number.isFinite(settings.nsfwBlurMinLevel) ? settings.nsfwBlurMinLevel : 4}" min="0" max="128" step="1">
-                  <p style="font-size: 0.85em; color: #bbb; margin-top: 5px;">
-                    Blur thumbnails when an image's <code>nsfwLevel</code> is greater than or equal to this value.
-                    Higher numbers indicate more explicit content. None (Safe/PG): 1, Mild (PG-13): 2, Mature (R): 4, Adult (X): 5, Extra Explicit (R): 8, Explicit (XXX): 16/32+
-                  </p>
-                </div>
-              </div>
             </div>
             <button type="submit" id="huggingface-settings-save" class="huggingface-button primary" style="margin-top: 20px;">Save Settings</button>
           </form>

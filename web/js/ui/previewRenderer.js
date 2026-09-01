@@ -18,21 +18,14 @@ export function renderDownloadPreview(ui, data) {
   const fileInfo = data.file_info || {};
   const files = Array.isArray(data.files) ? data.files : [];
   const thumbnail = data.thumbnail_url || PLACEHOLDER_IMAGE_URL;
-  const nsfwLevel = Number(data.nsfw_level ?? 0);
-  const blurMinLevel = Number(ui.settings?.nsfwBlurMinLevel ?? 4);
-  const shouldBlur = ui.settings?.hideMatureInSearch === true && nsfwLevel >= blurMinLevel;
   const huggingfaceLink = `https://huggingface.com/models/${modelId}${data.version_id ? '?modelVersionId=' + data.version_id : ''}`;
 
   const onErrorScript = `this.onerror=null; this.src='${PLACEHOLDER_IMAGE_URL}'; this.style.backgroundColor='#444';`;
 
-  const overlayHtml = shouldBlur ? `<div class="huggingface-nsfw-overlay" title="R-rated: click to reveal">R</div>` : '';
-  const containerClasses = `huggingface-thumbnail-container${shouldBlur ? ' blurred' : ''}`;
-
   const previewHtml = `
     <div class="huggingface-search-item" style="background-color: var(--comfy-input-bg);">
-      <div class="${containerClasses}" data-nsfw-level="${Number.isFinite(nsfwLevel) ? nsfwLevel : ''}">
+      <div class="huggingface-thumbnail-container">
         <img src="${thumbnail}" alt="${modelName} thumbnail" class="huggingface-search-thumbnail" loading="lazy" onerror="${onErrorScript}">
-        ${overlayHtml}
         <div class="huggingface-type-badge">${modelType}</div>
       </div>
       <div class="huggingface-search-info">

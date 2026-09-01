@@ -35,9 +35,6 @@ export function renderDownloadList(ui, items, container, emptyMessage) {
     const startTime = item.start_time || null;
     const endTime = item.end_time || null;
     const thumbnail = item.thumbnail || PLACEHOLDER_IMAGE_URL;
-    const nsfwLevel = Number(item.thumbnail_nsfw_level ?? 0);
-    const blurMinLevel = Number(ui.settings?.nsfwBlurMinLevel ?? 4);
-    const shouldBlur = ui.settings?.hideMatureInSearch === true && nsfwLevel >= blurMinLevel;
     const connectionType = item.connection_type || "N/A";
 
     let progressBarClass = '';
@@ -62,13 +59,9 @@ export function renderDownloadList(ui, items, container, emptyMessage) {
     const errorTooltip = errorMsg ? `title="Error Details: ${String(errorMsg).substring(0, 200)}${String(errorMsg).length > 200 ? '...' : ''}"` : '';
     const connectionInfoHtml = connectionType !== "N/A" ? `<span style="font-size: 0.85em; color: #aaa; margin-left: 10px;">(Conn: ${connectionType})</span>` : '';
 
-    const overlayHtml = shouldBlur ? `<div class=\"huggingface-nsfw-overlay\" title=\"R-rated: click to reveal\">R</div>` : '';
-    const containerClasses = `huggingface-thumbnail-container${shouldBlur ? ' blurred' : ''}`;
-
     let innerHTML = `
-      <div class="${containerClasses}" data-nsfw-level="${Number.isFinite(nsfwLevel) ? nsfwLevel : ''}">
+      <div class="huggingface-thumbnail-container">
         <img src="${thumbnail}" alt="thumbnail" class="huggingface-download-thumbnail" loading="lazy" onerror="${onErrorScript}">
-        ${overlayHtml}
       </div>
       <div class="huggingface-download-info">
         <strong>${modelName}</strong>
