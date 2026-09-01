@@ -45,7 +45,7 @@ async def route_repo_tree(request):
             # to list_repo_files if it is missing.
             if hasattr(hf_api, "list_repo_tree"):
                 items = []
-                for item in hf_api.list_repo_tree(repo_id, path=path, revision=revision):
+                for item in hf_api.list_repo_tree(repo_id, path_in_repo=path, revision=revision):
                     if isinstance(item, RepoFolder):
                         items.append({
                             "type": "directory",
