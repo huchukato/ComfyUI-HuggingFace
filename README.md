@@ -1,5 +1,9 @@
 # ComfyUI-HuggingFace - HuggingFace Model Downloader for ComfyUI
 
+<p align="center">
+  <img src="https://raw.githubusercontent.com/huchukato/ComfyUI-HuggingFace/main/banner.png" alt="ComfyUI-HuggingFace Banner" width="100%" />
+</p>
+
 [![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://python.org)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![ComfyUI](https://img.shields.io/badge/ComfyUI-Compatible-orange.svg)](https://github.com/comfyanonymous/ComfyUI)
