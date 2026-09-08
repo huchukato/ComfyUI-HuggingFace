@@ -41,6 +41,20 @@ MODEL_TYPE_ALIASES = {
     "motionmodules": "motion_models",
     "motion_model": "motion_models",
     "motion_models": "motion_models",
+    "clip": "clip",
+    "clip_vision": "clip_vision",
+    "clipvision": "clip_vision",
+    "text_encoder": "text_encoders",
+    "text_encoders": "text_encoders",
+    "textencoder": "text_encoders",
+    "textencoders": "text_encoders",
+    "ipadapter": "ipadapter",
+    "ip_adapter": "ipadapter",
+    "style_models": "style_models",
+    "stylemodel": "style_models",
+    "gligen": "gligen",
+    "photomaker": "photomaker",
+    "inpaint": "inpaint",
 }
 
 MODEL_TYPE_ALIASES_COMPACT = {
@@ -79,24 +93,29 @@ def get_model_dir(model_type: str, explicit_save_root: str = "", selected_subdir
                 base_path = os.path.join(base_path, selected_subdir)
             return base_path
         
-        # Try ComfyUI's folder_paths first
+        # First: check if the raw model_type (as passed by the UI dropdown) exists
+        # as a physical folder under ComfyUI/models/. The dropdown is populated
+        # dynamically from these folders, so they should be used as-is.
+        raw_type = model_type.lower().strip() if model_type else ""
+        models_dir = os.path.join(folder_paths.base_path, "models")
+        if raw_type:
+            physical_dir = os.path.join(models_dir, raw_type)
+            if os.path.isdir(physical_dir):
+                if selected_subdir:
+                    return os.path.join(physical_dir, selected_subdir)
+                return physical_dir
+
+        # Try ComfyUI's folder_paths
         try:
             if normalized_type in ["checkpoints", "loras", "vae", "embeddings", "hypernetworks", "controlnet", "upscale_models"]:
                 return folder_paths.get_folder_paths(normalized_type)[0]
             elif normalized_type in ["diffusion_models", "motion_models", "unet", "diffusers"]:
-                # ComfyUI may alias diffusion_models -> unet (or vice versa) in
-                # folder_paths, returning the wrong physical folder. Prefer the
-                # folder that actually matches the requested type name.
                 expected_folder_name = normalized_type
-                models_dir = os.path.join(folder_paths.base_path, "models")
                 physical_dir = os.path.join(models_dir, expected_folder_name)
 
-                # If the physical folder exists, use it directly
                 if os.path.isdir(physical_dir):
                     return physical_dir
 
-                # Otherwise try folder_paths, but verify the returned path
-                # actually contains the expected folder name (not an alias)
                 try:
                     paths = folder_paths.get_folder_paths(normalized_type)
                     if paths:
@@ -104,29 +123,42 @@ def get_model_dir(model_type: str, explicit_save_root: str = "", selected_subdir
                         candidate_name = os.path.basename(candidate)
                         if candidate_name == expected_folder_name:
                             return candidate
-                        # folder_paths returned an alias (e.g. unet for
-                        # diffusion_models). Create the correct folder instead.
                         print(f"[HuggingFace] folder_paths returned '{candidate}' for "
                               f"'{normalized_type}' (expected '{expected_folder_name}'). "
                               f"Creating dedicated folder.")
                 except Exception:
                     pass
 
-                # Fallback: create a folder named after the normalized type
-                # under the ComfyUI models directory.
                 fallback_dir = physical_dir
                 try:
                     os.makedirs(fallback_dir, exist_ok=True)
                 except Exception as mke:
                     print(f"[HuggingFace] Warning: could not create '{fallback_dir}': {mke}")
                 return fallback_dir
+            elif normalized_type != "other":
+                # Normalized type is known but not in the special cases above;
+                # try folder_paths for it
+                try:
+                    paths = folder_paths.get_folder_paths(normalized_type)
+                    if paths:
+                        return paths[0]
+                except Exception:
+                    pass
+                # Fall through to create under models/
+                fallback_dir = os.path.join(models_dir, normalized_type)
+                os.makedirs(fallback_dir, exist_ok=True)
+                return fallback_dir
             else:
-                # For other types, use our extension directory instead of custom_nodes
+                # Truly unknown type -- create a folder under models/ using the
+                # raw name so the user gets the folder they selected in the UI.
+                if raw_type:
+                    fallback_dir = os.path.join(models_dir, raw_type)
+                    os.makedirs(fallback_dir, exist_ok=True)
+                    return fallback_dir
                 from ..config import PLUGIN_ROOT
                 return os.path.join(PLUGIN_ROOT, "other_models")
             
         except:
-            # Fallback to base_path + type
             return os.path.join(folder_paths.base_path, normalized_type)
             
     except Exception as e:
