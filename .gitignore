@@ -164,3 +164,6 @@ download_history.json
 CLAUDE.md
 web/.DS_Store
 /tests
+
+# Local caches / Devin local config
+.ruff_cache/
