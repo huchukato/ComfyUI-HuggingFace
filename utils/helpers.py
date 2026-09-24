@@ -1,6 +1,7 @@
 # ================================================
 # File: utils/helpers.py
 # ================================================
+import json
 import os
 import urllib.parse
 import re 
@@ -79,19 +80,63 @@ def _normalize_model_type(model_type: str) -> str:
     
     return "other"
 
+def _is_within(path: str, base: str) -> bool:
+    """True if path resolves to base or a location inside it."""
+    try:
+        return os.path.commonpath((os.path.realpath(base), os.path.realpath(path))) == os.path.realpath(base)
+    except (ValueError, OSError):
+        return False
+
+def _join_within(base: str, subdir: str) -> Optional[str]:
+    """Join a client-supplied subdir onto base, rejecting escapes."""
+    if not subdir:
+        return base
+    joined = os.path.realpath(os.path.join(base, subdir))
+    if not _is_within(joined, base):
+        print(f"[HuggingFace] Rejected subdir escaping base directory: {subdir}")
+        return None
+    return joined
+
+def _allowed_save_roots() -> List[str]:
+    """Roots a client-provided save_root is allowed to point into."""
+    roots = set()
+    roots.add(os.path.realpath(os.path.join(folder_paths.base_path, "models")))
+    # All ComfyUI-registered model paths (covers extra_model_paths.yaml)
+    try:
+        for entry in folder_paths.folder_names_and_paths.values():
+            for p in entry[0]:
+                roots.add(os.path.realpath(p))
+    except Exception:
+        pass
+    # Plugin-registered custom roots
+    try:
+        roots_file = os.path.join(PLUGIN_ROOT, "custom_roots.json")
+        if os.path.exists(roots_file):
+            with open(roots_file, "r", encoding="utf-8") as f:
+                data = json.load(f)
+            if isinstance(data, dict):
+                for value in data.values():
+                    for p in (value or []):
+                        if isinstance(p, str) and p.strip():
+                            roots.add(os.path.realpath(p))
+    except Exception:
+        pass
+    return sorted(roots)
+
 def get_model_dir(model_type: str, explicit_save_root: str = "", selected_subdir: str = "") -> Optional[str]:
     """Get the directory path for a given model type."""
     try:
         # Normalize the model type
         normalized_type = _normalize_model_type(model_type)
         
-        # Use explicit root if provided
+        # Use explicit root if provided, but only if it stays inside a known
+        # model root (ComfyUI models dir, registered folder_paths, custom roots)
         if explicit_save_root:
-            base_path = explicit_save_root
-            # If selected_subdir is provided, append it
-            if selected_subdir:
-                base_path = os.path.join(base_path, selected_subdir)
-            return base_path
+            resolved_root = os.path.realpath(explicit_save_root)
+            if not any(_is_within(resolved_root, root) for root in _allowed_save_roots()):
+                print(f"[HuggingFace] Rejected save_root outside allowed model roots: {explicit_save_root}")
+                return None
+            return _join_within(resolved_root, selected_subdir)
         
         # First: check if the raw model_type (as passed by the UI dropdown) exists
         # as a physical folder under ComfyUI/models/. The dropdown is populated
@@ -100,10 +145,8 @@ def get_model_dir(model_type: str, explicit_save_root: str = "", selected_subdir
         models_dir = os.path.join(folder_paths.base_path, "models")
         if raw_type:
             physical_dir = os.path.join(models_dir, raw_type)
-            if os.path.isdir(physical_dir):
-                if selected_subdir:
-                    return os.path.join(physical_dir, selected_subdir)
-                return physical_dir
+            if _is_within(physical_dir, models_dir) and os.path.isdir(physical_dir):
+                return _join_within(physical_dir, selected_subdir)
 
         # Try ComfyUI's folder_paths
         try:
@@ -153,9 +196,11 @@ def get_model_dir(model_type: str, explicit_save_root: str = "", selected_subdir
                 # raw name so the user gets the folder they selected in the UI.
                 if raw_type:
                     fallback_dir = os.path.join(models_dir, raw_type)
-                    os.makedirs(fallback_dir, exist_ok=True)
-                    return fallback_dir
-                from ..config import PLUGIN_ROOT
+                    if _is_within(fallback_dir, models_dir):
+                        os.makedirs(fallback_dir, exist_ok=True)
+                        return fallback_dir
+                    print(f"[HuggingFace] Rejected model_type escaping models dir: {model_type}")
+                    return None
                 return os.path.join(PLUGIN_ROOT, "other_models")
             
         except:

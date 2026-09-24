@@ -92,11 +92,16 @@ async def route_download_model(request):
             final_filename = sanitize_filename(custom_filename_input)
         elif target_filename is None:
             # For repo downloads, use model name as folder
-            final_filename = model_info.get("name", target_model_id.split('/')[-1])
+            final_filename = sanitize_filename(model_info.get("name", target_model_id.split('/')[-1]))
         else:
             final_filename = os.path.basename(target_filename)
         
         save_path = os.path.join(target_dir, final_filename)
+        try:
+            if os.path.commonpath((os.path.realpath(target_dir), os.path.realpath(save_path))) != os.path.realpath(target_dir):
+                raise web.HTTPBadRequest(reason="Resolved save path escapes the target directory")
+        except ValueError:
+            raise web.HTTPBadRequest(reason="Invalid save path")
 
         # Check if file exists
         # For snapshot/repo downloads (no specific file), the target is a

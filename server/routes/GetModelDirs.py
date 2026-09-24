@@ -7,6 +7,8 @@ from aiohttp import web
 
 import server  # ComfyUI server instance
 from ...utils.helpers import (
+    _allowed_save_roots,
+    _is_within,
     get_model_dir,
     get_model_folder_paths,
     get_model_type_folder_name,
@@ -196,9 +198,17 @@ async def route_create_model_dir(request):
         if not new_dir:
             return web.json_response({"error": "Missing 'new_dir'"}, status=400)
 
-        # If client provided an explicit root, prefer it
-        base_dir = (data.get("root") or "").strip()
-        base_dir = os.path.abspath(base_dir) if base_dir else _get_effective_base_dir(model_type)
+        # If client provided an explicit root, prefer it — but only inside a
+        # known model root (models dir, folder_paths, registered custom roots)
+        raw_root = (data.get("root") or "").strip()
+        if raw_root:
+            base_dir = os.path.realpath(os.path.expanduser(raw_root))
+            if not any(_is_within(base_dir, r) for r in _allowed_save_roots()):
+                return web.json_response({"error": "root is outside allowed model roots"}, status=400)
+        else:
+            base_dir = _get_effective_base_dir(model_type)
+        if not base_dir:
+            return web.json_response({"error": "Could not resolve base directory"}, status=400)
         os.makedirs(base_dir, exist_ok=True)
 
         # Normalize and sanitize each part; disallow absolute and traversal
