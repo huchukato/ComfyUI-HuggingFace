@@ -1,5 +1,9 @@
 # Update Log
 
+## Version 1.1.4
+
+- Removed the bogus `requires-comfyui >=1.0.0` constraint — ComfyUI versions are 0.x, and the mismatch was disabling the node pack in ComfyUI Manager.
+
 ## Version 1.1.3
 
 - Removed the unused Meilisearch search method (dead code — search already goes through the official `huggingface_hub` library).
