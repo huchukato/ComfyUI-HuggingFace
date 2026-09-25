@@ -1,7 +1,7 @@
 [project]
 name = "ComfyUI-HuggingFace"
 description = "HuggingFace model downloader for ComfyUI — search, download, and organize AI models directly within your workflow with integrated Civitai repository access and batch download support."
-version = "1.1.2"
+version = "1.1.3"
 license = {file = "LICENSE"}
 dependencies = [
     "huggingface_hub>=0.20.0",

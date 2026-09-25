@@ -962,7 +962,7 @@ class DownloadManager:
                      print(f"[Manager OpenPath] Warning: Failed to load custom roots: {_e}")
                  # Include all first-level subdirectories under models_dir as safe
                  try:
-                     models_dir = getattr(__import__('folder_paths'), 'folder_paths').models_dir
+                     from folder_paths import models_dir
                  except Exception:
                      models_dir = None
                  try:
